@@ -1,0 +1,126 @@
+@page
+@model BEASTAdmin.UI.Pages.Passenger.UpsertModel
+@{
+	ViewData["Title"] = "Passenger Administration";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$('.NoteArea').summernote(
+			{
+				height: 150
+			}
+		);
+
+		$('.custom-file-input').on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).next('.custom-file-label').html(fileName);
+		});
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/Passenger/List" asp-route-c="passenger" asp-route-p="passengerP" class="breadcrumb-link">Passenger List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="Passenger.Id" type="hidden" />
+	<div class="row">
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Passenger.FirstName" class="control-label"></label>
+            <input asp-for="Passenger.FirstName" class="form-control" />
+            <span asp-validation-for="Passenger.FirstName" class="small text-danger"></span>
+        </div>
+
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Passenger.LastName" class="control-label"></label>
+            <input asp-for="Passenger.LastName" class="form-control" />
+            <span asp-validation-for="Passenger.LastName" class="small text-danger"></span>
+        </div>
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Passenger.Email" class="control-label"></label>
+            <input asp-for="Passenger.Email" class="form-control" />
+            <span asp-validation-for="Passenger.Email" class="small text-danger"></span>
+        </div>
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Passenger.DateOfBirth" class="control-label"></label>
+            <input asp-for="Passenger.DateOfBirth" class="form-control" />
+            <span asp-validation-for="Passenger.DateOfBirth" class="small text-danger"></span>
+        </div>
+		<div class="form-group col-4 mb-3">
+			<label asp-for="Passenger.Gender" class="control-label"></label>
+			<select asp-for="Passenger.Gender" class="form-control">
+				<option value="0">Select Gender</option>
+				<option value="3943088D-6A19-4593-ADF0-895682D83988">Male</option>
+				<option value="C5F47701-3052-4ABE-9B7E-1267F5EC00BF">Female</option>
+			</select>
+			<span asp-validation-for="Passenger.Gender" class="small text-danger"></span>
+		</div>
+
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Passenger.MobileNumber" class="control-label"></label>
+            <input asp-for="Passenger.MobileNumber" class="form-control" />
+            <span asp-validation-for="Passenger.MobileNumber" class="small text-danger"></span>
+        </div>
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Passenger.EnrollDate" class="control-label"></label>
+            <input asp-for="Passenger.EnrollDate" class="form-control" />
+            <span asp-validation-for="Passenger.EnrollDate" class="small text-danger"></span>
+        </div>
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Passenger.NID" class="control-label"></label>
+            <input asp-for="Passenger.NID" class="form-control" />
+            <span asp-validation-for="Passenger.NID" class="small text-danger"></span>
+        </div>
+		<div class="form-group col-4 mb-3">
+			<label asp-for="Passenger.SystemStatusId" class="control-label"></label>
+			<select asp-for="Passenger.SystemStatusId" asp-items="@Model.SystemStatusSelectList" class="form-control">
+				<option value="0">Select System Status</option>
+			</select>
+			<span asp-validation-for="Passenger.SystemStatusId" class="small text-danger"></span>
+		</div>
+		<input type="hidden" asp-for="Passenger.UserType" value="B1207EF0-45CF-4B78-ABCF-FD3AA434A80A" class="form-control">
+     </div>
+
+	<div class="row">
+		<div class="col-12">
+			<input type="submit" value="@( string.IsNullOrEmpty(Model.Passenger.Id) ? "Create Passenger" : "Update Passenger")" class="btn btn-success me-2" />
+			<a asp-page="/Passenger/List" asp-route-c="passenger" asp-route-p="passengerP" class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>

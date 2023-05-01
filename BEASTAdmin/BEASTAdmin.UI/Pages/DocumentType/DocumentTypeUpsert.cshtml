@@ -1,0 +1,86 @@
+@page
+@model BEASTAdmin.UI.Pages.DocumentType.DocumentTypeUpsert
+@{
+	ViewData["Title"] = "Document Type Entry";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/DocumentType/DocumentTypeList" asp-route-c="DocumentTypeList" asp-route-p="manageDocumentsP" class="breadcrumb-link">DocumentType List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="DocumentType.Id" type="hidden" />
+	
+
+	<div class="row">
+		<div class="col-12">
+			<div class="form-group mb-3">
+				<label class="control-label">Document For</label>
+				@*<input asp-for="DocumentType.VehicleBrandId" class="form-control" />*@
+				<select asp-for="DocumentType.DocumentFor" class="form-control" asp-items="@Model.SelectList">
+					<option value="0">Select Documents For</option>
+				</select>
+				<span asp-validation-for="DocumentType.DocumentFor" class="small text-danger"></span>
+			</div>
+
+			<div class="form-group mb-3">
+				<label class="control-label"> Document Name</label>
+				<input asp-for="DocumentType.Name" class="form-control" />
+				<span asp-validation-for="DocumentType.Name" class="small text-danger"></span>
+			</div>
+
+			
+			
+		</div>
+
+
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<input type="submit" value="@(Model.DocumentType.Id == "" ? "Create Document Type" : "Update Document Type")" class="btn btn-success me-2" />
+			<a asp-page="/DocumentType/DocumentTypeList" asp-route-c="DocumentTypeList" asp-route-p="manageDocumentsP"  class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>

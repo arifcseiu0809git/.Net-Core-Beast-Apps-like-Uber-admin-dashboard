@@ -1,0 +1,316 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    string categoryQuery = Context.Request.Query["c"].ToString() ?? "";
+    string pageQuery = Context.Request.Query["p"].ToString() ?? "";
+    string ActivePageQ(string page)
+    {
+        return (pageQuery.ToLower() == page.ToLower()) ? "active" : "";
+    }
+}
+<partial name="BrandLogoPartial" />
+<div class="sidebar">
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            @if (User.IsInRole("SystemAdmin"))
+            {
+               <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link"><i class="fa-solid fa-drivers-license fa-sm me-2"></i><p>Drivers<i class="right fas fa-angle-left"></i></p></a>
+                    <ul class="nav nav-treeview medium second-order-menu">
+                        <li class="nav-item"><a asp-page="/Driver/DriverList" asp-route-c="drivers" asp-route-p="approvedDriver" asp-route-approved="true" class="nav-link @ActivePageQ("approvedDriver")"><i class="fas fa-caret-right me-2"></i><p>Approved Driver</p></a></li>
+                        <li class="nav-item"><a asp-page="/Driver/DriverList" asp-route-c="drivers" asp-route-p="unApprovedDriver" asp-route-approved="false" class="nav-link @ActivePageQ("unApprovedDriver")"><i class="fas fa-caret-right me-2"></i><p>Un-approved Drivers</p></a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link ">
+                        <i class="fa-solid fa-map-location-dot fa-sm me-2"></i>
+                        <p>Address and Places<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview medium ">
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-flag fa-sm me-2"></i><p>Countries<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Country/CountryList" asp-route-c="country" asp-route-p="countryl" class="nav-link @ActivePageQ("countryl")"><i class="fas fa-caret-right me-2"></i><p>Countries</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Country/CountryUpsert" asp-route-c="country" asp-route-p="countryu" class="nav-link @ActivePageQ("countryu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update Country</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-city fa-sm me-2"></i><p>Cities<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/City/CityList" asp-route-c="city" asp-route-p="cityl" class="nav-link @ActivePageQ("cityl")"><i class="fas fa-caret-right me-2"></i><p>Cities</p></a></li>
+                                    <li class="nav-item"><a asp-page="/City/CityUpsert" asp-route-c="city" asp-route-p="cityu" class="nav-link @ActivePageQ("cityu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update City</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        @*<li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-bookmark fa-sm me-2"></i><p>Saved Address<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/SavedAddress/List" asp-route-c="Sad" asp-route-p="Sadl" class="nav-link @ActivePageQ("Sadl")"><i class="fas fa-caret-right me-2"></i><p>SavedAddress Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/SavedAddress/Upsert" asp-route-c="Sad" asp-route-p="Sadu" class="nav-link @ActivePageQ("Sadu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update SavedAddress</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>*@
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="fa-solid fa-car fa-sm me-2"></i>
+                        <p>Ride Administration<i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview medium ">
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-car fa-sm me-2"></i><p>Rides<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Trip/TripList" asp-route-statusId="" asp-route-c="trip" asp-route-p="allRides" class="nav-link @ActivePageQ("allRides")"><i class="fas fa-caret-right me-2"></i><p>All Rides</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Trip/TripList" asp-route-statusId="5102125d-949c-4f9c-bc4d-e60b75305bcb" asp-route-c="trip" asp-route-p="scheduledRides"  class="nav-link @ActivePageQ("scheduledRides")"><i class="fas fa-caret-right me-2"></i><p>Scheduled Rides</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Trip/TripList" asp-route-statusId="639723fd-c643-497e-9530-2d6dd90e7a82" asp-route-c="trip" asp-route-p="pendingRides" class="nav-link @ActivePageQ("pendingRides")"><i class="fas fa-caret-right me-2"></i><p>Pending Rides</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Trip/TripList" asp-route-statusId="A6A38BAB-75A9-4C54-8C79-D82F556F5A13" asp-route-c="trip" asp-route-p="cancelRides"  class="nav-link @ActivePageQ("cancelRides")"><i class="fas fa-caret-right me-2"></i><p>Cancel Rides</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item second-order-menu">
+                            <a asp-page="/ManualRideBooking/ManualRideBookingList" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="nav-link @ActivePageQ("manualRideBookingP")">
+                                <i class="fa fa-bookmark"></i>
+                                <p>Manual Ride Booking</p>
+                            </a>
+                        </li>
+@*                        <li class="nav-item second-order-menu">
+                            <a asp-page="/Category/List" asp-route-c="reviews" asp-route-p="reviewsP" class="nav-link @ActivePageQ("reviewsP")">
+                                <i class="fa fa-star-half-alt"></i>
+                                <p>Reviews and Trackings</p>
+                            </a>
+                        </li>*@
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a asp-page="/Passenger/List" asp-route-c="passenger" asp-route-p="passengerP" class="nav-link @ActivePageQ("passengerP")">
+                        <i class="fa fa-user-group"></i>
+                        <p>Passenger</p>
+                    </a>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link"><i class="fa-solid fa-bus fa-sm me-2"></i><p>Vehicle Administration<i class="right fas fa-angle-left"></i></p></a>
+                    <ul class="nav nav-treeview medium ">
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-taxi fa-sm me-2"></i><p>Vehicles<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Vehicle/Vehicles/List" asp-route-c="vehicles" asp-route-p="vehiclesList" class="nav-link @ActivePageQ("vehiclesList")"><i class="fas fa-caret-right me-2"></i><p>Vehicles Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Vehicle/Vehicles/Upsert" asp-route-c="vehicles" asp-route-p="vehiclesUpdate" class="nav-link @ActivePageQ("vehiclesUpdate")"><i class="fas fa-caret-right me-2"></i><p>Create/Update Vehicles</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-thin fa-car fa-sm me-2"></i><p>Vehicle Brand<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleBrand/List" asp-route-c="vehicleBrand" asp-route-p="vehicleBrandl" class="nav-link @ActivePageQ("vehicleBrandl")"><i class="fas fa-caret-right me-2"></i><p>Vehicle Brand Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleBrand/Upsert" asp-route-c="vehicleBrand" asp-route-p="vehicleBrandu" class="nav-link @ActivePageQ("vehicleBrandu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update Vehicle Brand</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link "><i class="fa-solid fa-location-pin fa-sm me-2"></i><p>Vehicle Current Location<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleCurrentLocation/List" asp-route-c="vehicleCurrentLocation" asp-route-p="vehicleCurrentLocationl" class="nav-link @ActivePageQ("vehicleCurrentLocationl")"><i class="fas fa-caret-right me-2"></i><p>Vehicle Current Location Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleCurrentLocation/Upsert" asp-route-c="vehicleCurrentLocation" asp-route-p="vehicleCurrentLocationu" class="nav-link @ActivePageQ("vehicleCurrentLocationu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update Vehicle Current Location</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-money-bill fa-sm me-2"></i><p>Vehicle Fare<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleFare/List" asp-route-c="vehicleFare" asp-route-p="vehicleFareList" class="nav-link @ActivePageQ("vehicleFareList")"><i class="fas fa-caret-right me-2"></i><p>Vehicle Fare Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleFare/Upsert" asp-route-c="vehicleFare" asp-route-p="vehicleFareUpsert" class="nav-link @ActivePageQ("vehicleFareUpsert")"><i class="fas fa-caret-right me-2"></i><p>Create/Update Vehicle Fare</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-sitemap fa-sm me-2"></i><p>Vehicle Type<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleType/List" asp-route-c="vehicleType" asp-route-p="vehicleTypel" class="nav-link @ActivePageQ("vehicleTypel")"><i class="fas fa-caret-right me-2"></i><p>VehicleType Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleType/Upsert" asp-route-c="vehicleType" asp-route-p="vehicleTypeu" class="nav-link @ActivePageQ("vehicleTypeu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update VehicleType</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-sitemap fa-sm me-2"></i><p>Vehicle Model<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleModel/VehicleListModel" asp-route-c="vehicleModel" asp-route-p="vehicleModell" class="nav-link @ActivePageQ("vehicleModel")"><i class="fas fa-caret-right me-2"></i><p>Vehicle Model Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Vehicle/VehicleModel/VehicleModelUpsert" asp-route-c="vehicleModel" asp-route-p="vehicleModelu" class="nav-link @ActivePageQ("vehicleModelu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update Vehicle Model</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-sitemap fa-sm me-2"></i><p>X Driver Vehicle<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Vehicle/XDriverVehicle/List" asp-route-c="xDriverVehicle" asp-route-p="xDriverVehiclel" class="nav-link @ActivePageQ("xDriverVehiclel")"><i class="fas fa-caret-right me-2"></i><p>X Driver Vehicle Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Vehicle/XDriverVehicle/Upsert" asp-route-c="xDriverVehicle" asp-route-p="xDriverVehicleu" class="nav-link @ActivePageQ("xDriverVehicleu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update X Driver Vehicle</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link"><i class="fa-solid fa-money-bill-alt fa-sm me-2"></i><p>Payment & Coupon<i class="right fas fa-angle-left"></i></p></a>
+                    <ul class="nav nav-treeview medium ">
+                        @*<li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-money-bill fa-sm me-2"></i><p>Transaction<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Transaction/List" asp-route-c="transaction" asp-route-p="transactionl" class="nav-link @ActivePageQ("transactionl")"><i class="fas fa-caret-right me-2"></i><p>Transaction Administration</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-money-bill fa-sm me-2"></i><p>Transaction Detail<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/TransactionDetail/List" asp-route-c="transactionDetail" asp-route-p="transactionDetaill" class="nav-link @ActivePageQ("transactionDetaill")"><i class="fas fa-caret-right me-2"></i><p>TransactionDetail Administration</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-money-bill fa-sm me-2"></i><p>Transaction Request<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/TransactionRequest/List" asp-route-c="transactionRequest" asp-route-p="transactionRequestl" class="nav-link @ActivePageQ("transactionRequestl")"><i class="fas fa-caret-right me-2"></i><p>TransactionRequest Administration</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-money-bill fa-sm me-2"></i><p>Transaction Response<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/TransactionResponse/List" asp-route-c="transactionResponse" asp-route-p="transactionRequestl" class="nav-link @ActivePageQ("transactionResponsel")"><i class="fas fa-caret-right me-2"></i><p>TransactionResponse Administration</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>*@
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-credit-card fa-sm me-2"></i><p>Payment Type<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/PaymentType/PaymentTypeList" asp-route-c="ptyp" asp-route-p="ptypl" class="nav-link @ActivePageQ("ptypl")"><i class="fas fa-caret-right me-2"></i><p>PaymentType Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/PaymentType/PaymentTypeUpsert" asp-route-c="ptyp" asp-route-p="ptypu" class="nav-link @ActivePageQ("ptypu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update PaymentType</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-money-check-dollar  fa-sm me-2"></i><p>Payment Method<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/PaymentMethod/PaymentMethodList" asp-route-c="Pmet" asp-route-p="Pmetl" class="nav-link @ActivePageQ("Pmetl")"><i class="fas fa-caret-right me-2"></i><p>PaymentMethod Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/PaymentMethod/PaymentMethodUpsert" asp-route-c="Pmet" asp-route-p="Pmetu" class="nav-link @ActivePageQ("Pmetu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update PaymentMethod</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-money-check-dollar fa-sm me-2"></i><p>Payment Option<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/PaymentOption/PaymentOptionList" asp-route-c="popt" asp-route-p="poptl" class="nav-link @ActivePageQ("poptl")"><i class="fas fa-caret-right me-2"></i><p>PaymentOption Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/PaymentOption/PaymentOptionUpsert" asp-route-c="popt" asp-route-p="poptu" class="nav-link @ActivePageQ("poptu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update PaymentType</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <ul class="nav-item has-treeview second-order-menu">
+                                <a href="#" class="nav-link"><i class="fa-solid fa-ticket fa-sm me-2"></i><p>Coupon<i class="right fas fa-angle-left"></i></p></a>
+                                <ul class="nav nav-treeview medium third-order-menu">
+                                    <li class="nav-item"><a asp-page="/Coupon/CouponList" asp-route-c="Coupl" asp-route-p="Coupl" class="nav-link @ActivePageQ("Coupl")"><i class="fas fa-caret-right me-2"></i><p>Coupon Administration</p></a></li>
+                                    <li class="nav-item"><a asp-page="/Coupon/CouponUpsert" asp-route-c="Coupu" asp-route-p="Coupu" class="nav-link @ActivePageQ("Coupu")"><i class="fas fa-caret-right me-2"></i><p>Create/Update Coupon</p></a></li>
+                                </ul>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+
+@*                <li class="nav-item">
+                    <a asp-page="/Category/List" asp-route-c="localization" asp-route-p="localizationP" class="nav-link @ActivePageQ("localizationP")">
+                        <i class="fa fa-globe"></i>
+                        <p>Localization</p>
+                    </a>
+                </li>*@
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link"><i class="fa-solid fa-file-excel fa-sm me-2"></i><p>Earning Reports<i class="right fas fa-angle-left"></i></p></a>
+                    <ul class="nav nav-treeview medium second-order-menu">
+                        <li class="nav-item"><a asp-page="/Pie/List" asp-route-c="earningReports" asp-route-p="earningReportsFormat1" class="nav-link @ActivePageQ("earningReportsFormat1")"><i class="fas fa-caret-right me-2"></i><p>Format 1</p></a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a asp-page="/DocumentType/DocumentTypeList" asp-route-c="DocumentTypeList" asp-route-p="manageDocumentsP" class="nav-link @ActivePageQ("manageDocumentsP")">
+                        <i class="fa fa-file"></i>
+                        <p>Manage Documents</p>
+                    </a>
+                </li>
+
+@*                <li class="nav-item">
+                    <a asp-page="/Category/List" asp-route-c="siteSettings" asp-route-p="siteSettingsP" class="nav-link @ActivePageQ("siteSettingsP")">
+                        <i class="fa fa-user"></i>
+                        <p>Site Settings</p>
+                    </a>
+                </li>*@
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link"><i class="fa-regular fa-user fa-sm me-2"></i><p>User Management<i class="right fas fa-angle-left"></i></p></a>
+                    <ul class="nav nav-treeview medium second-order-menu">
+                        <li class="nav-item"><a asp-area="Identity" asp-page="/Account/Manage/UserManagement" asp-route-c="usr" asp-route-p="usrl" class="nav-link @ActivePageQ("usrl")"><i class="fas fa-caret-right me-2"></i><p>User Administration</p></a></li>
+                        <li class="nav-item"><a asp-area="Identity" asp-page="/Account/Register" asp-route-c="usr" asp-route-p="usru" class="nav-link @ActivePageQ("usru")"><i class="fas fa-caret-right me-2"></i><p>Create User</p></a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link"><i class="fa-solid fa-gears fa-sm me-2"></i><p>Settings<i class="right fas fa-angle-left"></i></p></a>
+                    <ul class="nav nav-treeview medium second-order-menu">
+                        <li class="nav-item"><a asp-page="/Settings/EmailTemplate/List" asp-route-c="set" asp-route-p="et" class="nav-link @ActivePageQ("et")"><i class="fas fa-caret-right me-2"></i><p>Email Template</p></a></li>
+                        <li class="nav-item"><a asp-page="/Settings/SystemStatus/List" asp-route-c="set" asp-route-p="ss" class="nav-link @ActivePageQ("ss")"><i class="fas fa-caret-right me-2"></i><p>System Status</p></a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link"><i class="fa-solid fa-file-excel fa-sm me-2"></i><p>System Reports<i class="right fas fa-angle-left"></i></p></a>
+                    <ul class="nav nav-treeview medium second-order-menu">
+                        <li class="nav-item"><a asp-page="/Report/AuditLog" asp-route-c="rpt" asp-route-p="adtl" class="nav-link @ActivePageQ("adtl")"><i class="fas fa-caret-right me-2"></i><p>Audit Log</p></a></li>
+                        <li class="nav-item"><a asp-page="/Report/ApplicationLog" asp-route-c="rpt" asp-route-p="appl" class="nav-link @ActivePageQ("appl")"><i class="fas fa-caret-right me-2"></i><p>Application/Exception Log</p></a></li>
+                    </ul>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+<!-- Sidebar -->
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("a.active").parents("li.has-treeview").addClass('menu-open');
+        $("a.active").parents("ul.has-treeview").addClass('menu-open');
+        $("a.active").parents("ul.nav-treeview").siblings("a.nav-link").addClass('active');
+    });
+</script>
+<style type="text/css">
+    ul.second-order-menu {
+        padding-left: 1rem !important;
+    }
+    li.second-order-menu {
+        padding-left: 1rem !important;
+    }
+
+    ul.third-order-menu {
+        padding-left: 1rem !important;
+    }
+</style>

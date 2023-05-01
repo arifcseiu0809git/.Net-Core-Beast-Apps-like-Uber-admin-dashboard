@@ -1,0 +1,137 @@
+﻿@page "{Id}"
+@inject IConfiguration _config
+@model BEASTAdmin.UI.Pages.Driver.DisplayModel
+@{
+	//ViewData["Title"] = "Pie Details";
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+<li class="breadcrumb-item"><a asp-page="/Pie/List" asp-route-c="pie" asp-route-p="piel" class="breadcrumb-link">Pie List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+<div class="row mb-2">
+    <h3>Driver Overview</h3>
+    <hr />
+</div>
+<div class="row mb-4">
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.UserFullName" class="col-sm-2 col-form-label">Full Name</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext" id="@Model.Driver.UserFullName">@Model.Driver.UserFullName</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.MobileNumber" class="col-sm-2 col-form-label">Mobile Number</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext" id="@Model.Driver.MobileNumber">@Model.Driver.MobileNumber</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.DrivingLicenseNo" class="col-sm-2 col-form-label">Driving License No</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext" id="@Model.Driver.DrivingLicenseNo">@Model.Driver.DrivingLicenseNo</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.IsApproved" class="col-sm-2 col-form-label">Approval Status</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext" id="@Model.Driver.IsApproved">@Model.Driver.StatusName</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="accordion" id="accordionPanelsStayOpenExample">
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                Ride History
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show mb-1" aria-labelledby="panelsStayOpen-headingOne">
+            <div class="row col-12 mb-1">
+                <table class="table-info table-striped">
+                    <thead>
+                        <tr>
+                            <th>Ride Id</th>
+                            <th>Passenger Name</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Payment Status</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var Trip in Model.TripModels)
+                        {
+                            <tr>
+                                <td>@Trip.Id</td>
+                                <td>@Trip.PassengerName</td>
+                                <td>@Trip.RequestTime.ToString("dd MMM yyyy")</td>
+                                <td>$@Trip.Total</td>
+                                <td>Card</td>
+                                <td>@Trip.StatusName</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @{
+                    int pageSize = Convert.ToInt32(_config["SiteSettings:PageSize"]);
+                    <div class="row mt-4">
+                        <div class="col-sm-8 overflow-auto">
+                            <ul class="pagination mb-0">
+                                @for (var i = 1; i <= Model.TotalRidePages; i++)
+                                {
+                                    <li class="pagination-item @(i == Model.RideHistoryPageNumber ? "active" : "")">
+                                        <a asp-page-handler="OnRideListPageClick" asp-route-ridePageNo="@i" onclick="OnRid" class="pagination-link">@i</a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-sm-4 align-self-center text-sm-right text-center">
+                            Showing @(((Model.RideHistoryPageNumber - 1) * pageSize) + 1) to @((Model.RideHistoryPageNumber * pageSize) > Model.TotalRideRecords ? Model.TotalRideRecords : (Model.RideHistoryPageNumber * pageSize)) of @Model.TotalRideRecords records.
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                Accordion Item #2
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+            <div class="accordion-body">
+                <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+            </div>
+        </div>
+    </div>
+
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                Accordion Item #3
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+            <div class="accordion-body">
+                <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+            </div>
+        </div>
+    </div>
+</div>

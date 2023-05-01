@@ -1,0 +1,108 @@
+@page
+@model BEASTAdmin.UI.Pages.Passenger.PassengerRideHistory
+@inject IConfiguration _config
+
+@{
+	ViewData["Title"] = @Model.PassengerName + " Ride List";
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (Model.RideHistories.Count > 0)
+{
+	<form method="post">
+		<div class="row mb-4">
+			<div class="col-12 justify-content-end d-flex align-items-right">
+				<span class="me-2">Total Record(s): @Model.TotalRecords</span>
+				<button asp-page-handler="Export" asp-route-PassengerId="@Model.PassengerId" class="btn">				
+						<i class="fa-solid fa-file-export"></i>
+				</button>
+			</div>
+		</div>
+
+		<table class="table table-bordered table-sm table-hover table-valign-middle mb-0">
+			<thead class="thead-light text-center">
+				<tr>
+					<th>Driver Name</th>
+					<th>Service Type</th>
+					<th>Request Time</th>
+					<th>Pickup Location</th>
+					<th>Destination Location</th>
+					<th>Fare</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody class="medium">
+				@foreach (var passenger in Model.RideHistories)
+				{
+					<tr>
+						<td>@passenger.DriverName</td>
+						<td>@passenger.VehicleTypeName</td>
+						<td>@passenger.RequestTime</td>
+						@*<td>
+							@if (@passenger.TripStartTime < Convert.ToDateTime("01-01-1971"))
+							{
+								<p>--/--/----</p>
+							}
+							else
+
+							{
+								@passenger.TripStartTime
+							}
+						</td>
+						<td>
+							@if (@passenger.TripEndTime < Convert.ToDateTime("01-01-1971"))
+							{
+								<p>--/--/----</p>
+							}
+							else
+
+							{
+								@passenger.TripEndTime
+							}
+						</td>*@
+						<td><i class="fa-solid fa-location-pin fa-sm me-2"></i> @passenger.OriginAddress</td>
+						<td><i class="fa-solid fa-location-pin fa-sm me-2"></i> @passenger.DestinationAddress</td>
+						<td align="right">@passenger.TotalCost</td>						
+						<td>@passenger.StatusName</td>						
+					</tr>
+				}
+
+			</tbody>
+		</table>
+	</form>
+
+	@if (Model.TotalPages > 1)
+	{
+		int pageSize = Convert.ToInt32(_config["SiteSettings:PageSize"]);
+		<div class="row mt-4">
+			<div class="col-sm-8 overflow-auto">
+				<ul class="pagination mb-0">
+					@for (var i = 1; i <= Model.TotalPages; i++)
+					{
+						<li class="pagination-item @(i == Model.PageNumber ? "active" : "")">
+							<a asp-page="/Passenger/PassengerRideHistory" asp-route-pagenumber="@i" asp-route-Id="@Model.PassengerId" asp-route-c="Passenger" asp-route-p="PassengerP" class="pagination-link">@i</a>
+						</li>
+					}
+				</ul>
+			</div>
+			<div class="col-sm-4 align-self-center text-sm-right text-center">
+				Showing @(((Model.PageNumber - 1) * pageSize) + 1) to @((Model.PageNumber * pageSize) > Model.TotalRecords ? Model.TotalRecords : (Model.PageNumber * pageSize)) of @Model.TotalRecords records.
+			</div>
+		</div>
+	}
+}
+else
+{
+	<div>There is no content to show.</div>
+}
+<br>
+<div class="row">
+	<div class="col-12">
+		<a asp-page="/Passenger/List" asp-route-c="passenger" asp-route-p="passengerP" class="btn btn-success">Back to List</a>
+	</div>
+</div>

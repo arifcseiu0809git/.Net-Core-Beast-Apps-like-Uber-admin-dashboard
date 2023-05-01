@@ -1,0 +1,359 @@
+﻿@page
+@inject IConfiguration _config
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@model BEASTAdmin.UI.Pages.Driver.DriverCommissionTransaction
+@{
+	ViewData["Title"] = "Driver Commissions";
+}
+@functions {
+    public string GetAntiXsrfRequestToken()
+    {
+        return Xsrf.GetAndStoreTokens(Model.HttpContext).RequestToken;
+    }
+}
+
+@section Breadcrumb
+{
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Driver/DriverList" asp-route-c="Driver" asp-route-p="@(Model.Driver.IsApproved== false ? "unApprovedDriver" : "ApprovedDriver")" asp-route-approved="@Model.Driver.IsApproved" class="breadcrumb-link">Driver List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+@Html.Hidden("driverId", Model.Driver.Id)
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.SuccessMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row mb-2">
+    <h3>Driver Overview</h3>
+    <hr />
+</div>
+<div class="row mb-4">
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.UserFullName" class="col-sm-2 col-form-label">Full Name</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext text-muted" id="@Model.Driver.UserFullName">@Model.Driver.UserFullName</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.MobileNumber" class="col-sm-2 col-form-label">Mobile Number</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext text-muted" id="@Model.Driver.MobileNumber">@Model.Driver.MobileNumber</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.DrivingLicenseNo" class="col-sm-2 col-form-label">Driving License No</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext text-muted" id="@Model.Driver.DrivingLicenseNo">@Model.Driver.DrivingLicenseNo</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="mb-3 row">
+            <label for="@Model.Driver.IsApproved" class="col-sm-2 col-form-label">Approval Status</label>
+            <div class="col-sm-10">
+                <label class="form-control-plaintext text-muted" id="@Model.Driver.IsApproved">@Model.Driver.StatusName</label>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="row col-12 mb-1">
+        <div class="col-6">
+            <h4 class="accordion-header mb-2">
+                Commission History
+            </h4>
+        </div>
+        <div class="col-6">
+            @*<button class="btn btn-primary float-end">Add Transaction</button>*@
+            <button class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addDriverTransactionModal">
+                Add Transaction
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="addDriverTransactionModal" tabindex="-1" aria-labelledby="addDriverTransactionModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addDriverTransactionModalLabel">Add Transaction</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="fromDate" class="form-label">From Date</label>
+                                    <input type="date" class="form-control" id="fromDate" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="toDate" class="form-label">To Date</label>
+                                    <input type="date" class="form-control" id="toDate" required>
+                                </div>
+                                <div class="col-12 mt-1">
+                                    <button id="getDue" class="btn btn-primary btn-sm">Get Due</button>
+                                </div>
+                            </div>
+                            <div id="paymentSection" class="row">
+                                <div class="col-md-6">
+                                    <label for="dueCommission" class="form-label">Due Commission</label>
+                                    <input type="text" class="form-control" disabled readonly id="dueCommission"  value="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ddlPaymentType" class="form-label">Payment Type</label>
+                                    <select id="ddlPaymentType" class="form-select" aria-label="Payment type selection">
+                                        <option value="">Select payment type</option>
+                                        @foreach (var paymentType in Model.PaymentTypeSelectList)
+                                        {
+                                            <option value="@paymentType.Value">@paymentType.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ddlPaymentOption" class="form-label">Payment Option</label>
+                                    <select id="ddlPaymentOption" class="form-select" aria-label="Payment option">
+                                        <option value="" selected>Select payment option</option>
+                                        
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="ddlPaymentMethod" class="form-label">Payment Method</label>
+                                    <select id="ddlPaymentMethod" class="form-select" aria-label="Payment Method">
+                                        <option value="" selected>Select payment method</option>
+                                        
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="transactionId" class="form-label">Transaction Id</label>
+                                    <input type="text" class="form-control" id="transactionId" placeholder="Transaction Id (optional)">
+                                </div>
+                                @*<div class="col-12 mt-1">
+                                    <button type="submit" class="btn btn-primary btn-sm">Pay</button>
+                                </div>*@
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" id="btnAddTransaction" class="btn btn-primary" disabled>Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row col-12 mb-1">
+        <table class="table-info table-striped">
+            <thead>
+                <tr>
+                    <th>Trip Id</th>
+                    <th>Trip Fare</th>
+                    <th>Commission Rate</th>
+                    <th>Commission Amount</th>
+                    <th>Commission Status</th>
+                    <th>Payment Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var commissionTransaction in Model.DriverTripCommissions)
+                {
+                    <tr>
+                        <td>@commissionTransaction.TripId</td>
+                        <td>@commissionTransaction.TripFare</td>
+                        <td>@Model.CommissionRate</td>
+                        <td>@commissionTransaction.CommissionAmount</td>
+                        <td>@(commissionTransaction.IsCommisionReceived ? "Paid" : "Unpaid")</td>
+                        <td>
+                            @(commissionTransaction.CommissionReceiveDate.HasValue? 
+                            commissionTransaction.CommissionReceiveDate.Value.ToString("dd/MM/yyyy") : "")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @{
+            int pageSize = Convert.ToInt32(_config["SiteSettings:PageSize"]);
+            <div class="row mt-4">
+                <div class="col-sm-8 overflow-auto">
+                    <ul class="pagination mb-0">
+                        @for (var i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="pagination-item @(i == Model.PageNumber ? "active" : "")">
+                                <a asp-page="/Driver/DriverCommissionTransaction" asp-route-pagenumber="@i" asp-route-driverId="@Model.Driver.Id" class="pagination-link">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-sm-4 align-self-center text-sm-right text-center">
+                    Showing @(((Model.PageNumber - 1) * pageSize) + 1) to @((Model.PageNumber * pageSize) > Model.TotalRecords ? Model.TotalRecords : (Model.PageNumber * pageSize)) of @Model.TotalRecords records.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        clearTransactionValues();
+    });
+
+    var addDriverTransactionModal = document.getElementById('addDriverTransactionModal')
+    addDriverTransactionModal.addEventListener('show.bs.modal', function (event) {
+        clearTransactionValues();
+        $("#btnAddTransaction").prop("disabled", true);
+        $("#dueCommission").val('');
+    });
+
+    var clearTransactionValues = function () {
+        $("#fromDate").val('');
+        $("#toDate").val('');
+        $("#dueCommission").val('');
+        $("#transactionId").val('');
+        $("#paymentSection").hide();
+        $("#ddlPaymentType option:selected").prop("selected", false);
+        $("#ddlPaymentOption option:selected").prop("selected", false);
+        $("#ddlPaymentMethod option:selected").prop("selected", false);
+    }
+
+    $("#getDue").click(function(){
+        var isValid = validateCommissionRangeDateFields();
+        if(!isValid) return;
+
+        var fromDate = $("#fromDate").val();
+        var toDate = $("#toDate").val();
+        var driverId = $("#driverId").val();
+        var apiAddress = $("#baseApiAddress").val();
+        $.getJSON(`?handler=DueCommissions&driverId=${driverId}&fromDate=${fromDate}&toDate=${toDate}`, (data) => {
+            $("#paymentSection").show();
+            $("#dueCommission").val(data);
+        });
+    });
+
+    var validateCommissionRangeDateFields = function (){
+        var fromDateValid = true;
+        var toDateValid = true;
+        $('#fromDate').removeClass('is-invalid');
+        $('#toDate').removeClass('is-invalid');
+
+        if ($('#fromDate').val() == '') { 
+            $('#fromDate').addClass('is-invalid');
+            fromDateValid = false;
+        }
+
+        if ($('#toDate').val() == '') {
+            $('#toDate').addClass('is-invalid');
+            toDateValid = false;
+        }
+
+        return fromDateValid && toDateValid;
+    }
+
+    var validatePaymentSelections = function(){
+        var isTypeValid = true;
+        var isOptionValid = true;
+        var isMethodValid = true
+
+        $('#ddlPaymentType').removeClass('is-invalid');
+
+        if ($('#ddlPaymentType').find(":selected").val() == '') {
+            isTypeValid = false;
+            $('#ddlPaymentType').addClass('is-invalid');
+        }
+
+        //if ($('#ddlPaymentOption').find(":selected").val() == '') {
+        //    isOptionValid = false;
+        //    $('#ddlPaymentOption').addClass('is-invalid');
+        //}
+
+        //if ($('#ddlPaymentMethod').find(":selected").val() == '') {
+        //    isMethodValid = false;
+        //    $('#ddlPaymentMethod').addClass('is-invalid');
+        //}
+
+        return isTypeValid; // && isOptionValid && isMethodValid;
+    }
+
+    $("#fromDate").change(function(){
+        if ($("#fromDate").val() != '') $('#fromDate').removeClass('is-invalid');
+    });
+    $("#toDate").change(function () {
+        if ($("#toDate").val() != '') $('#toDate').removeClass('is-invalid');
+    });
+
+    $("#ddlPaymentType").change(function(){
+        var selectedType = $('#ddlPaymentType').find(":selected").val();
+        $('#ddlPaymentOption option:not(:first)').remove();
+        $('#ddlPaymentMethod option:not(:first)').remove();
+
+        if(!selectedType) return;
+
+        $.getJSON(`?handler=ChangePaymentType&paymentTypeId=${selectedType}`, (data) => {
+            data.forEach(element => {
+                $('#ddlPaymentOption').append(`<option value=${element.id}>${element.name}</option>`)
+            });
+        });
+
+        var isValid = validatePaymentSelections();
+        if(isValid){
+            $("#btnAddTransaction").prop("disabled", false);
+        }
+        else{
+            $("#btnAddTransaction").prop("disabled", true);
+        }
+    });
+
+    $("#ddlPaymentOption").change(function(){
+        var selectedType = $('#ddlPaymentType').find(":selected").val();
+        var selectedOption = $('#ddlPaymentOption').find(":selected").val();
+        $('#ddlPaymentMethod option:not(:first)').remove();
+
+        if(!selectedOption && !selectedType)
+        {
+            return;
+        }
+
+        $.getJSON(`?handler=ChangePaymentOption&paymentTypeId=${selectedType}&paymentOptionId=${selectedOption}`, (data) => {
+            data.forEach(element => {
+                $('#ddlPaymentMethod').append(`<option value=${element.id}>${element.accountNumber}</option>`)
+            });
+        });
+
+    });
+
+    $("#btnAddTransaction").click(function(){
+        var isRequiredFieldsValid = validateCommissionRangeDateFields() && validatePaymentSelections();
+        if(!isRequiredFieldsValid) return;
+
+        var fromDate = $("#fromDate").val();
+        var toDate = $("#toDate").val();
+        var driverId = $("#driverId").val();
+        var paymentTypeId = $('#ddlPaymentType').find(":selected").val();
+        var paymentOptionId = $('#ddlPaymentOption').find(":selected").val();
+        var paymentMethodId = $('#ddlPaymentMethod').find(":selected").val(); 
+        var transactionId = $("#transactionId").val();
+
+        $.getJSON(`?handler=AddTransaction&driverId=${driverId}&fromDate=${fromDate}&toDate=${toDate}&paymentTypeId=${paymentTypeId}&paymentOptionId=${paymentOptionId}&paymentMethodId=${paymentMethodId}&transactionId=${transactionId}`
+        , (data) => {
+            $("#addDriverTransactionModal").modal('toggle');
+            alert(data);
+        });
+
+
+    });
+
+</script>

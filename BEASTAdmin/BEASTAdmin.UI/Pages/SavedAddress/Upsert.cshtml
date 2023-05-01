@@ -1,0 +1,104 @@
+@page
+@model BEASTAdmin.UI.Pages.SavedAddress.UpsertModel
+@{
+    ViewData["Title"] = "Saved Address Administration";
+}
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/SavedAddress/List" class="breadcrumb-link" asp-route-c="sadd" asp-route-p="saddl">Saved Address List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.SuccessMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form method="post">
+    <input asp-for="savedAddress.Id" type="hidden" />
+
+    <div class="row">
+        <div class="col-4">
+            <div class="form-group mb-3">
+                <label for="HomeAddress"> Home Address </label>
+                <input asp-for="savedAddress.HomeAddress" class="form-control" />
+                <span asp-validation-for="savedAddress.HomeAddress" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="HomeLatiitude"> Home Latiitude </label>
+                <input type="text" asp-for="savedAddress.HomeLatiitude" class="form-control" />
+                <span asp-validation-for="savedAddress.HomeLatiitude" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="HomeLongitude"> Home Longitude </label>
+                <input asp-for="savedAddress.HomeLongitude" class="form-control" />
+                <span asp-validation-for="savedAddress.HomeLongitude" class="small text-danger"></span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group mb-3">
+                <label for="OfficeAddress"> Office Address </label>
+                <input asp-for="savedAddress.OfficeAddress" class="form-control" />
+                <span asp-validation-for="savedAddress.OfficeAddress" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="OfficeLatiitude"> Office Latiitude </label>
+                <input asp-for="savedAddress.OfficeLatiitude" class="form-control" />
+                <span asp-validation-for="savedAddress.OfficeLatiitude" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="OfficeLongitude">Office Longitude </label>
+                <input asp-for="savedAddress.OfficeLongitude" class="form-control" />
+                <span asp-validation-for="savedAddress.OfficeLongitude" class="small text-danger"></span>
+
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group mb-3">
+                <label for="OtherSavedPlace"> Other Saved Place </label>
+                <input asp-for="savedAddress.OtherSavedPlace" class="form-control" />
+                <span asp-validation-for="savedAddress.OtherSavedPlace" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="OtherLatiitude">Other Latiitude</label>
+                <input asp-for="savedAddress.OtherLatiitude" class="form-control" />
+                <span asp-validation-for="savedAddress.OtherLatiitude" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="OtherLongitude"> Other Longitude </label>
+                <input asp-for="savedAddress.OtherLongitude" class="form-control" />
+                <span asp-validation-for="savedAddress.OtherLongitude" class="small text-danger"></span>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="form-group mb-3">
+                <label asp-for="savedAddress.IsActive" class="control-label"></label>
+                <input asp-for="savedAddress.IsActive" class="form-check" />
+            </div>
+        </div>
+        
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="@(string.IsNullOrEmpty( Model.savedAddress.Id) ? "Create Saved Addr." : "Update Saved Addr.")" class="btn btn-success me-2" />
+        <a asp-page="/SavedAddress/List" asp-route-c="sadd" asp-route-p="saddl" class="btn btn-success">Back to List</a>
+    </div>
+</form>

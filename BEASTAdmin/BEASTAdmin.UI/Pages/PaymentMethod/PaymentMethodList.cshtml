@@ -1,0 +1,136 @@
+@page
+@model BEASTAdmin.UI.Pages.PaymentMethod.PaymentMethodListModel
+@inject IConfiguration _config
+
+@{
+	ViewData["Title"] = "Payment Method List";
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+<div class="filter">
+	<form method="post">
+		<label>Payment type</label>
+		<select asp-for="PaymentTypeId" id="ddlPaymentType" style="width:120px;" asp-items="@Model.PaymentTypes">
+			<option value="0">All</option>
+			</select>
+		<label>Payment Option</label>
+		<select asp-for="PaymentOptionId" style="width:120px;" id="ddlPaymentOption"><option value="0">All</option></select>
+		<label class="control-label">ContctNo</label>
+		<input asp-for="ContactNo" />
+		<label class="control-label">Account No</label>
+		<input asp-for="AccountNo" />
+		<button asp-page-handler="Filter" asp-route-c="pmet" asp-route-p="pmetu" class="btn bg-transparent"><i class="fas fa-search fa-2x"></i></button>
+	</form>
+</div>
+<form method="post">
+	<div class="row mb-4">
+		<div class="col-6 justify-content-start d-flex align-items-center">
+			<a asp-page="/PaymentMethod/PaymentMethodUpsert" asp-route-c="pmet" asp-route-p="pmetu" class="btn btn-success"><i class="fa-solid fa-square-plus"></i>&nbsp;Create</a>
+		</div>
+		<div class="col-6 justify-content-end d-flex align-items-center">
+			<input asp-for="PaymentTypeId" type="hidden" />
+			<input asp-for="PaymentOptionId" type="hidden" />
+			<input asp-for="ContactNo" type="hidden" />
+			<input asp-for="AccountNo" type="hidden" />
+			<span class="me-2">Total Record(s): @Model.TotalRecords</span><button asp-page-handler="Export" class="btn"><i class="fa-solid fa-file-export"></i></button>
+		</div>
+	</div>
+
+	<table class="table table-bordered table-sm table-hover table-valign-middle mb-0">
+		<thead class="thead-light text-center">
+			<tr> 
+				<th>Payment Type</th>
+				<th>Payment Option</th>
+				<th>User</th>
+				<th>Contact No</th>
+				<th>Account Number</th>
+				<th>Expire Month Year</th>
+				<th>Cvv Code</th>
+				<th>Is Active?</th>
+				@*<th>Is Deleted?</th>*@
+				<th>Edit</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody class="medium">
+			@foreach (var paymentMethod in Model.PaymentMethods)
+			{
+				<tr> 
+					<td>@paymentMethod.PaymentTypeName</td>
+					<td>@paymentMethod.PaymentOptionName</td>
+					<td>@paymentMethod.UserFullName</td>
+					<td>@paymentMethod.ContactNo</td>
+					<td>@paymentMethod.AccountNumber</td>
+					<td>@paymentMethod.ExpireMonthYear</td>
+					<td>@paymentMethod.CvvCode</td>
+					<td>@paymentMethod.IsActive</td>
+					@*<td>@paymentMethod.IsDeleted</td>*@
+					<td class="text-center">
+						<a asp-page="/PaymentMethod/PaymentMethodUpsert" asp-route-Id="@paymentMethod.Id" asp-route-c="pmet" asp-route-p="pmetu" title="Edit" class="btn btn-success"><i class="fas fa-edit"></i></a>
+					</td>
+
+					<td class="text-center">
+						<button asp-page-handler="Delete" asp-route-Id="@paymentMethod.Id" class="btn btn-success" title="Delete" onclick="return confirm('Are you sure you want to delete?')">
+							<i class="fas fa-trash-alt"></i>
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</form>
+
+@if (Model.TotalPages > 1)
+{
+	int pageSize = Convert.ToInt32(_config["SiteSettings:PageSize"]);
+	<div class="row mt-4">
+		<div class="col-sm-8">
+			<ul class="pagination mb-0">
+				@for (var i = 1; i <= Model.TotalPages; i++)
+				{
+					<li class="pagination-item @(i == Model.PageNumber ? "active" : "")">
+						<a asp-page="/PaymentMethod/PaymentMethodList" asp-route-pagenumber="@i" asp-route-c="pmet" asp-route-p="pmetl" class="pagination-link">@i</a>
+					</li>
+				}
+			</ul>
+		</div>
+		<div class="col-sm-4 align-self-center text-sm-right text-center">
+			Showing @(((Model.PageNumber - 1) * pageSize) + 1) to @((Model.PageNumber * pageSize) > Model.TotalRecords ? Model.TotalRecords : (Model.PageNumber * pageSize)) of @Model.TotalRecords records.
+		</div>
+	</div>
+}
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+		var nPaymentTypeId = @Html.Raw(Json.Serialize(@Model.PaymentTypeId));
+		var nPaymentOptionId = @Html.Raw(Json.Serialize(@Model.PaymentOptionId));
+		if (nPaymentTypeId != "" && nPaymentTypeId!= null) {
+			LoadPaymentOption(nPaymentTypeId, nPaymentOptionId);
+		}
+	});
+
+	function LoadPaymentOption(selectedType, nPaymentOptionId) {
+		debugger;
+		if (!selectedType) return;
+		$.getJSON(`?handler=ChangePaymentType&paymentTypeId=${selectedType}`, (data) => {
+			data.forEach(element => {
+				$('#ddlPaymentOption').append(`<option value=${element.Id}>${element.Name}</option>`)
+			});
+			$('#ddlPaymentOption').val(nPaymentOptionId);
+		});
+	}
+
+	$("#ddlPaymentType").change(function () {
+		var selectedType = $('#ddlPaymentType').find(":selected").val();
+		$('#ddlPaymentOption option:not(:first)').remove();
+		LoadPaymentOption(selectedType, "0");
+
+	});
+
+
+</script>

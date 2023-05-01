@@ -1,0 +1,208 @@
+@page
+@model BEASTAdmin.UI.Pages.Vehicle.Vehicles.UpsertModel
+@{
+	ViewData["Title"] = "Vehicle Administration";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$('.NoteArea').summernote(
+			{
+				height: 150
+			}
+		);
+
+		$('.custom-file-input').on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).next('.custom-file-label').html(fileName);
+		});
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/Vehicle/Vehicles/List" asp-route-c="vehicles" asp-route-p="vehiclesList" class="breadcrumb-link">Vehicle List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="Vehicle.Id" type="hidden" />
+	
+	<div class="row">
+    		<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.VehicleTypeId" class="control-label"></label>
+				<select asp-for="Vehicle.VehicleTypeId" asp-items="@Model.VehicleTypeSelectList" class="form-control">
+					<option value="0">Select Brand</option>
+				</select>
+				<span asp-validation-for="Vehicle.VehicleTypeId" class="small text-danger"></span>
+			</div>
+            <div class="form-group col-4 mb-3">
+                <label asp-for="Vehicle.VehicleBrandId" class="control-label"></label>
+                <select asp-for="Vehicle.VehicleBrandId" asp-items="@Model.VehicleBrandSelectList" class="form-control">
+                    <option value="0">Select Brand</option>
+                </select>
+                <span asp-validation-for="Vehicle.VehicleBrandId" class="small text-danger"></span>
+            </div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.VehicleModelId" class="control-label"></label>
+				<select asp-for="Vehicle.VehicleModelId" asp-items="@Model.VehicleModelSelectList" class="form-control">
+					<option value="0">Select Model</option>
+				</select>
+				<span asp-validation-for="Vehicle.VehicleModelId" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.StatusId" class="control-label"></label>
+				<select asp-for="Vehicle.StatusId" asp-items="@Model.SystemStatusSelectList" class="form-control">
+					<option value="0">Select Status</option>
+				</select>
+				<span asp-validation-for="Vehicle.StatusId" class="small text-danger"></span>
+			</div>
+            <div class="form-group col-4 mb-3">
+                <label asp-for="Vehicle.RegistrationNo" class="control-label"></label>
+                <input asp-for="Vehicle.RegistrationNo" class="form-control" />
+                <span asp-validation-for="Vehicle.RegistrationNo" class="small text-danger"></span>
+            </div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.RegistrationDate" class="control-label"></label>
+				<input asp-for="Vehicle.RegistrationDate" class="form-control" />
+				<span asp-validation-for="Vehicle.RegistrationDate" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.Color" class="control-label"></label>
+				<input asp-for="Vehicle.Color" class="form-control" />
+				<span asp-validation-for="Vehicle.Color" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.Fuel" class="control-label"></label>
+				<select asp-for="Vehicle.Fuel" class="form-control">
+						<option value="0">Select Fuel Type</option>
+						<option value="1b09e30e-1411-4919-9a1b-f4775b54d2d5">Diesel</option>
+						<option value="3ec7512a-4851-4038-b5e9-5a581ebabc47">Octen</option>
+						<option value="85312ac9-6bce-4bd8-9eeb-35a3bf254925">Petrol</option>
+						<option value="a0fd8187-43d4-4d7d-89aa-f4a5e7ba8e9e">CNG</option>
+						<option value="eaa85c70-84b6-4180-9938-6ef35446efeb">Hybrid</option>
+						<option value="5efe4b2c-1604-48c2-9116-ea743f98a1fe">Electric</option>
+					</select>
+				<span asp-validation-for="Vehicle.Fuel" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.Seat" class="control-label"></label>
+				<input asp-for="Vehicle.Seat" class="form-control" />
+				<span asp-validation-for="Vehicle.Seat" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.IsActive" class="control-label"></label>
+				<select asp-for="Vehicle.IsActive" class="form-control">
+					<option value=FALSE>Select Activity</option>
+					<option value=TRUE>On Line</option>
+					<option value=FALSE>Off Line</option>
+				</select>
+				<span asp-validation-for="Vehicle.IsActive" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.IsApproved" class="control-label"></label>
+				<select asp-for="Vehicle.IsApproved" class="form-control">
+					<option value=FALSE>Select Approval</option>
+					<option value=TRUE>Approved</option>
+					<option value=FALSE>Pending</option>
+				</select>
+				<span asp-validation-for="Vehicle.IsActive" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.EngineNo" class="control-label"></label>
+				<input asp-for="Vehicle.EngineNo" class="form-control" />
+				<span asp-validation-for="Vehicle.EngineNo" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.ChassisNo" class="control-label"></label>
+				<input asp-for="Vehicle.ChassisNo" class="form-control" />
+				<span asp-validation-for="Vehicle.ChassisNo" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.Weight" class="control-label"></label>
+				<input asp-for="Vehicle.Weight" class="form-control" />
+				<span asp-validation-for="Vehicle.Weight" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.Laden" class="control-label"></label>
+				<input asp-for="Vehicle.Laden" class="form-control" />
+				<span asp-validation-for="Vehicle.Laden" class="small text-danger"></span>
+			</div>
+            <div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.Authority" class="control-label"></label>
+			<select asp-for="Vehicle.Authority" class="form-control">
+					<option value="0">Select Authority</option>
+					<option value="4e877d44-6d2f-4c8b-ad11-80331021c17f">Self</option>
+					<option value="b4d92c71-de7b-4b7a-b3a2-4c3220a92a35">Rent</option>
+				</select>
+			<span asp-validation-for="Vehicle.Authority" class="small text-danger"></span>
+            </div>
+            <div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.OwnerType" class="control-label"></label>
+				<select asp-for="Vehicle.OwnerType" class="form-control">
+					<option value="0">Select Owner Type</option>
+					<option value="a75b4f8f-3f49-47ad-90e0-c7901f3c05af">Self</option>
+					<option value="19126dcb-12e7-4fe4-af06-91b67f3945e8">Loan</option>
+				</select>
+				<span asp-validation-for="Vehicle.OwnerType" class="small text-danger"></span>
+			</div>
+            <div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.FitnessExpiredOn" class="control-label"></label>
+				<input asp-for="Vehicle.FitnessExpiredOn" class="form-control" />
+				<span asp-validation-for="Vehicle.FitnessExpiredOn" class="small text-danger"></span>
+            </div>
+			 <div class="form-group col-4 mb-3">
+				<label asp-for="Vehicle.InsuranceExpiresOn" class="control-label"></label>
+				<input asp-for="Vehicle.InsuranceExpiresOn" class="form-control" />
+				<span asp-validation-for="Vehicle.InsuranceExpiresOn" class="small text-danger"></span>
+            </div>		@*	
+       
+		<div class="col-6">
+			<div class="form-group col-4 mb-3">
+			</div>
+
+			<div class="form-group col-4 mb-3">
+			</div>*@
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<input type="submit" value="@(string.IsNullOrEmpty(Model.Vehicle.Id) ? "Create Vehicle" : "Update Vehicle")" class="btn btn-success me-2" />
+			<a asp-page="/Vehicle/Vehicles/List" asp-route-c="vehicles" asp-route-p="vehiclesList" class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>

@@ -1,0 +1,66 @@
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using BEASTAPI.Endpoint.Resources;
+
+namespace BEASTAPI.Endpoint.Controllers.V1.Passenger;
+
+public partial class PassengerAuthController
+{
+    private delegate Task<IActionResult> ReturningFunctionWithTask();
+    private delegate IActionResult ReturningFunctionWithoutTask();
+    private string Messages = "";
+
+    private async Task<IActionResult> TryCatch(ReturningFunctionWithTask returningFunction)
+    {
+        try
+        {
+            return await returningFunction();
+        }
+        catch (Exception ex)
+        {
+            _ = Task.Run(() => { _logger.LogError(ex, ex.Message); });
+
+            if (returningFunction.Method.Name.Contains("Register"))
+                Messages = ExceptionMessages.MobileAuth_Register;
+
+            if (returningFunction.Method.Name.Contains("Login"))
+                Messages = ExceptionMessages.MobileAuth_Login;
+
+            if (returningFunction.Method.Name.Contains("ChangePassword"))
+                Messages = ExceptionMessages.MobileAuth_ChangePassword;
+
+            if (returningFunction.Method.Name.Contains("GetToken"))
+                Messages = ExceptionMessages.MobileAuth_GetToken;
+
+            return StatusCode(StatusCodes.Status500InternalServerError, Messages);
+        }
+        finally
+        {
+            // Do clean up code here, if needed.
+        }
+    }
+
+    private IActionResult TryCatch(ReturningFunctionWithoutTask returningFunction)
+    {
+        try
+        {
+            return returningFunction();
+        }
+        catch (Exception ex)
+        {
+            _ = Task.Run(() => { _logger.LogError(ex, ex.Message); });
+
+            if (returningFunction.Method.Name.Contains("GetCurrentUser"))
+                Messages = ExceptionMessages.MobileAuth_GetCurrentUser;
+
+            return StatusCode(StatusCodes.Status500InternalServerError, Messages);
+        }
+        finally
+        {
+            // Do clean up code here, if needed.
+        }
+    }
+}

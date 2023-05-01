@@ -1,0 +1,63 @@
+@page
+@model BEASTAdmin.UI.Pages.PaymentOption.PaymentOptionUpsertModel
+@{
+    ViewData["Title"] = "Payment Option Administration";
+}
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/PaymentOption/PaymentOptionList" class="breadcrumb-link" asp-route-c="popt" asp-route-p="Poptl">Payment Option List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.SuccessMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form method="post">
+    <input asp-for="paymentOption.Id" type="hidden" />
+    <div class="row">        
+        <div class="col-6">
+            <div class="form-group mb-3">
+                <label for="HomeAddress"> Payment Type </label>
+                <select asp-for="paymentOption.PaymentType" asp-items="@Model.PaymentTypeSelectList" class="form-control">
+                    <option value="0">Select Payment Type</option>
+                </select>
+                <span asp-validation-for="paymentOption.PaymentType" class="small text-danger"></span>
+
+            </div>
+            <div class="form-group mb-3">
+                <label for="Name"> Name</label>
+                <input asp-for="paymentOption.Name" class="form-control" />
+                <span asp-validation-for="paymentOption.Name" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="paymentOption.IsActive" class="control-label"></label>
+                <input asp-for="paymentOption.IsActive" class="form-check" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="@(string.IsNullOrEmpty( Model.paymentOption.Id) ? "Create Payment Option" : "Update Payment Option")" class="btn btn-success me-2" />
+        <a asp-page="/PaymentOption/PaymentOptionList" asp-route-c="popt" asp-route-p="poptl" class="btn btn-success">Back to List</a>
+    </div>
+</form>

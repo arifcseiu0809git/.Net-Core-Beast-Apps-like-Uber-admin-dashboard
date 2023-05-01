@@ -1,0 +1,250 @@
+@page
+@model BEASTAdmin.UI.Pages.Trip.InvoiceDetailsModel
+      
+@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+@section Styles
+    {
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+    <link href="~/css/googlemap.min.css" rel="stylesheet" />
+}
+    @section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Trip/TripList" asp-route-c="trip" asp-route-p="@(Model.StatusId== "5102125d-949c-4f9c-bc4d-e60b75305bcb" ? "scheduledRides" : Model.StatusId== "639723fd-c643-497e-9530-2d6dd90e7a82"? "pendingRides": Model.StatusId== "A6A38BAB-75A9-4C54-8C79-D82F556F5A13"? "cancelRides": "allRides")" class="breadcrumb-link">Trip List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<style type="text/css">
+    .form-group{
+        border-bottom:1px solid;
+    }
+
+    p {
+        font-weight:400;
+    }
+</style>
+
+@Html.AntiForgeryToken()
+    <input asp-for="Trip.Id" type="hidden" />
+ 
+     
+       <div class="row">                
+                <div class="col-6" >
+                     <div class="row">
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Rid Id</label>
+                            </div>
+                        <div class="form-group col-6" style="display:flex;">
+                                            <p  id="lblBaseFare">: @Model.Trip.Id</p>
+                                        </div>
+                                        <div class="form-group col-6" style="display:flex;">
+                                            <label class="control-label">Passenger Name</label>
+                                        </div>
+                        <div class="form-group col-6" style="display:flex;">
+                            <p  id="lblBaseFare">: @Model.Trip.PassengerName</p>
+                                        </div>         
+                                        <div class="form-group col-6" style="display:flex;">
+                                            <label class="control-label">Driver Name</label>
+                                        </div>
+                        <div class="form-group col-6" style="display:flex;">
+                            <p  id="lblBaseFare">: @Model.Trip.DriverName</p>
+                                        </div> 
+                                        <div class="form-group col-6" style="display:flex;">
+                                            <label class="control-label">Ride Start</label>
+                                        </div>
+                                        <div class="form-group col-6" style="display:flex;">
+                            <p  id="lblBaseFare">: @Model.Trip.RequestTime.ToString("dd MMM yyyy")</p>
+                            </div>  
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Pick up Address</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p >: @Model.Trip.OriginAddress</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Destination Address</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p>: @Model.Trip.DestinationAddress</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Vehicle Type</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p>: @Model.Trip.VehicleTypeName</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Base Fare</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p>: $@Model.Trip.BaseFare</p>
+                            </div>
+                             <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Total Distance</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p>: @Model.Trip.DistanceKm</p>Km
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">ETA</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p >: @Model.Trip.DurationMinute </p>Mins
+                            </div>      
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Estimated Fair Total</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p>: $@Model.Trip.EstimatedCost</p>
+                            </div>           
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Tax</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p >: $@Model.Trip.TaxAmount</p>
+                            </div>          
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Total Amount</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p>: $@Model.Trip.TotalCost</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Payment Method</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p >: Cash</p>
+                            </div>   
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Payment Status</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                <p >: Paid</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Ride Status</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p>:Complete</p>
+                            </div>
+                    </div>
+                    <div class="col-12">
+                         <a asp-page="/Trip/TripList" asp-route-c="trip" asp-route-p="@(Model.StatusId== "5102125d-949c-4f9c-bc4d-e60b75305bcb" ? "scheduledRides" : Model.StatusId== "639723fd-c643-497e-9530-2d6dd90e7a82"? "pendingRides": Model.StatusId== "A6A38BAB-75A9-4C54-8C79-D82F556F5A13"? "cancelRides": "allRides")" class="btn">Back to List</a>
+                    </div>
+                </div>
+                <div class="col-6">
+                        <div class="form-group mb-12">
+                            <div id="map_canvas" style="width:680px; height:550px"></div>
+                        </div>
+                  </div>
+        </div>
+   
+
+@section Scripts
+    {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzU-YOGJ7Lh-5XwOPy_b1GWhKy2dtUx3w&libraries=places,directions"></script>
+    <div id="map_canvas" style="width:400px; height:300px"></div>
+
+    <script>
+
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map_canvas"), {
+                center: { lat: 40.712776, lng: -74.005974 },
+                zoom: 8,
+            });
+
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+            });
+
+            const request = {
+                origin: "New York, NY",
+                destination: "Los Angeles, CA",
+                waypoints: [
+                    {
+                        location: "Las Vegas, NV",
+                        stopover: true,
+                    },
+                ],
+                travelMode: "DRIVING",
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status == "OK") {
+                    directionsRenderer.setDirections(result);
+                }
+            });
+
+            const options = {
+                suppressMarkers: true,
+                polylineOptions: {
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.7,
+                    strokeWeight: 5,
+                },
+            };
+            directionsRenderer.setOptions(options);
+        }
+        var oDataList = [], oPickupAdds = [], oDistAdds = [];
+        $(document).ready(function () {
+            initMap();
+            var oTrip = @Html.Raw(Json.Serialize(@Model.Trip));
+                $('#divTrip').data('Trip', oTrip);
+  
+        });
+        function RefreshControl(){
+
+            if ($('#divTrip').data('Trip').id == '' || $('#divTrip').data('Trip').DriverId=='') {
+                $('idBookRide').attr('disabled',true);
+            }
+            if ($('#divTrip').data('Trip').DriverId != '')
+            {
+                $('#lblErrorMessage').hide();
+            }
+            $('#txtsearchDriver').val($('#divTrip').data('Trip').DriverName);
+            $("#txtContactNo").val($('#divTrip').data('Trip').ContactNo);
+            $("#txtEmail").val($('#divTrip').data('Trip').Email);
+            LoadCity($('#divTrip').data('Trip').CountryId);
+        }
+
+
+
+
+
+
+        function CalculateValue() 
+        {
+            var oTripIniital = $('#divTrip').data('Trip');
+            oTripIniital.EstimatedCost = (parseFloat(oTripIniital.BaseFare) * parseFloat(oTripIniital.DistanceKm)).toFixed(2);
+            oTripIniital.TotalCost = (parseFloat(oTripIniital.EstimatedCost) + parseFloat(oTripIniital.TaxAmount)).toFixed(2);
+            $('#lblBaseFare').html(oTripIniital.BaseFare);
+            $('#lblDistance').html(oTripIniital.DistanceKm);
+            $('#lblDurationMinute').html(oTripIniital.DurationMinute);
+            $('#lblEstimatedCost').html(oTripIniital.EstimatedCost);
+            $('#lblTaxAmount').html(oTripIniital.TaxAmount);
+            $('#lblTotalCost').html(oTripIniital.TotalCost);
+            $('#divTrip').data('Trip',oTripIniital); //value set again
+        }
+
+
+
+
+
+    </script>
+
+
+}

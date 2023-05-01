@@ -1,0 +1,119 @@
+@page
+@model BEASTAdmin.UI.Pages.Driver.DriverStatement
+@inject IConfiguration _config
+
+@{
+	ViewData["Title"] = "Statement Of "+@Model.DriverName;
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Driver/DriverList" asp-route-c="Driver" asp-route-p="@(Model.DriverModel.IsApproved== false ? "unApprovedDriver" : "ApprovedDriver")">&nbsp;Back To List </a></li>
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+<style>
+	.col-3 {
+		height:100px;
+	}
+
+	.card-main{
+		width:90%;
+	}
+	.card-title {
+		font-size: 1.5rem;
+	}	
+	.card-text {
+		font-size: 1.5rem;
+	}
+
+.icon{
+	padding-top:15px;
+	padding-left:5px;
+}
+</style>
+
+<div class="row">
+	<div class="col-3 flex-row">
+		<div class="card card-main flex-row bg-primary text-white">
+			<i class="icon fa-solid fa-car fa-4x"></i>
+			<div class="card-body"><h4 class="card-title h5 h4-sm">Total No Of Rides</h4><p class="card-text">@Model.TotalRecords</p></div>
+		</div>
+	</div>
+	<div class="col-3 flex-row">
+		<div class="card card-main flex-row bg-danger text-white">
+			<i class="icon fa-solid fa-circle-xmark fa-4x"></i>
+			<div class="card-body"><h4 class="card-title h5 h4-sm">Cancel Rides</h4><p class="card-text">@Model.CancelTrips</p></div>
+		</div>
+
+	</div>
+	<div class="col-3 flex-row">
+		<div class=" card card-main flex-row bg-success text-white">
+			<i class="icon fa-sharp fa-solid fa-check fa-4x"></i>
+			<div class="card-body"><h4 class="card-title h5 h4-sm">Completed Rides</h4><p class="card-text">@Model.CompleteTrips</p></div>
+		</div>
+
+	</div>
+	<div class="col-3 flex-row">
+		<div class="card card-main flex-row bg-info text-white">
+			<i class=" icon fa-solid fa-dollar-sign fa-4x"></i>
+			<div class="card-body"><h4 class="card-title h5 h4-sm">Revenue</h4><p class="card-text">@Model.Revenues</p></div>
+		</div>
+	</div>
+</div>
+@if (Model.TripModels.Count > 0)
+{
+	<form method="post">
+	
+		<table class="table table-bordered table-sm table-hover table-valign-middle mb-0">
+			<thead class="thead-light text-center">
+				<tr>
+					<th>Trip Id</th>
+					<th>Picked Up</th>
+					<th>Dropped</th>
+					<th>Date On</th>
+					<th>Earned</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody class="medium">
+				@foreach (var Trip in Model.TripModels)
+				{
+					<tr>
+						<td><a asp-page="Display" asp-route-Id="@Trip.Id" target="_blank">@Trip.Id</a></td>
+						<td class="text-start">@Trip.StartLocationName</td>
+						<td class="text-center">@Trip.EndLocationName</td>
+						<td class="text-end">@Trip.RequestTime.ToString("dd MMM yyyy")</td>
+						<td class="text-end">$@Trip.Total</td>
+						<td class="text-end">@Trip.StatusName</td>
+					</tr>
+				}
+
+			</tbody>
+		</table>
+	</form>
+
+	@if (Model.TotalPages > 1)
+	{
+		int pageSize = Convert.ToInt32(_config["SiteSettings:PageSize"]);
+		<div class="row mt-4">
+			<div class="col-sm-8 overflow-auto">
+				<ul class="pagination mb-0">
+					@for (var i = 1; i <= Model.TotalPages; i++)
+					{
+						<li class="pagination-item @(i == Model.PageNumber ? "active" : "")">
+							<a asp-page="/Driver/DriverStatement" asp-route-pagenumber="@i" asp-route-c="Driver" asp-route-p="@(Model.DriverModel.IsApproved== false ? "unApprovedDriver" : "ApprovedDriver")" class="pagination-link">@i</a>
+						</li>
+					}
+				</ul>
+			</div>
+			<div class="col-sm-4 align-self-center text-sm-right text-center">
+				Showing @(((Model.PageNumber - 1) * pageSize) + 1) to @((Model.PageNumber * pageSize) > Model.TotalRecords ? Model.TotalRecords : (Model.PageNumber * pageSize)) of @Model.TotalRecords records.
+			</div>
+		</div>
+	}
+}
+else
+{
+	<div>There is no content to show.</div>
+}

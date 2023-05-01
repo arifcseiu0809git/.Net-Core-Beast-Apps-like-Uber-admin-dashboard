@@ -1,0 +1,109 @@
+@page
+@model BEASTAdmin.UI.Pages.Country.CountryUpsertModel
+@{
+    ViewData["Title"] = "Country Administration";
+}
+
+@section Styles
+    {
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+    {
+    <script src="~/plugins/moment.js/moment.min.js"></script>
+    <script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.NoteArea').summernote(
+                {
+                    height: 150
+                }
+            );
+
+            $('.custom-file-input').on("change", function () {
+                var fileName = $(this).val().split("\\").pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
+
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Country/CountryList" asp-route-c="country" asp-route-p="countryl" class="breadcrumb-link">Country List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.SuccessMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form method="post" enctype="multipart/form-data">
+    <input asp-for="Country.Id" type="hidden" />
+    @*<input asp-for="Transaction.ImageUrl" type="hidden" />*@
+
+    <div class="row">
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Country.CountryName" class="control-label">Country Name</label>
+            <input asp-for="Country.CountryName" class="form-control" />
+            <span asp-validation-for="Country.CountryName" class="small text-danger"></span>
+        </div>
+
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Country.ShortName" class="control-label">Country ShortName</label>
+            <input asp-for="Country.ShortName" class="form-control" />
+            <span asp-validation-for="Country.ShortName" class="small text-danger"></span>
+        </div>
+
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Country.CountryCode" class="control-label">Country Code</label>
+            <input asp-for="Country.CountryCode" class="form-control" />
+            <span asp-validation-for="Country.CountryCode" class="small text-danger"></span>
+        </div>
+
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Country.CurrencyCode" class="control-label">Currency Code</label>
+            <input asp-for="Country.CurrencyCode" class="form-control" />
+            <span asp-validation-for="Country.CurrencyCode" class="small text-danger"></span>
+        </div>
+
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Country.MobileNumberDigitCount" class="control-label">Mobile Number Digit Count</label>
+            <input asp-for="Country.MobileNumberDigitCount" class="form-control" />
+            <span asp-validation-for="Country.MobileNumberDigitCount" class="small text-danger"></span>
+        </div>
+
+        <div class="form-group col-4 mb-3">
+            <label asp-for="Country.MobileNumberCode" class="control-label">Mobile Number Code</label>
+            <input asp-for="Country.MobileNumberCode" class="form-control" />
+            <span asp-validation-for="Country.MobileNumberCode" class="small text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <input type="submit" value="@(string.IsNullOrEmpty(Model.Country.Id)? "Create Country" : "Update Country" )" class="btn btn-success me-2" />
+            <a asp-page="/Country/CountryList" asp-route-c="country" asp-route-p="countryl" class="btn btn-success">Back to List</a>
+        </div>
+    </div>
+</form>

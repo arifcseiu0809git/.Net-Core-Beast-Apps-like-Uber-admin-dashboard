@@ -1,0 +1,551 @@
+@page
+@model BEASTAdmin.UI.Pages.ManualRideBooking.ManualRideBookingUpsertModel
+      
+@{
+    ViewData["Title"] = "Manual Ride Booking";
+}
+
+@section Styles
+    {
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+    <link href="~/css/googlemap.min.css" rel="stylesheet" />
+}
+
+
+
+    @section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/ManualRideBooking/ManualRideBookingList" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="breadcrumb-link">Manual Ride Booking List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.SuccessMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@Html.AntiForgeryToken()
+    <input asp-for="TripInitial.Id" type="hidden" />
+    <div class="row" id="divTripInitial">
+       
+        <div class="col-2">
+            <div class="form-group mb-3">
+                <label class="control-label">Country</label>
+                <select asp-for="TripInitial.CountryId" asp-items="@Model.CountrySelectList" id="cboCountryId" class="form-control">
+                    <option value="0">Select Country Name</option>
+                </select>
+                <span asp-validation-for="TripInitial.CountryId" class="small text-danger"></span>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group mb-3">
+                <label class="control-label">City</label>
+                <select asp-for="TripInitial.CityId"  id="cboCity" class="form-control">
+                    <option value="0">Select City Name</option>
+                </select>
+                <span asp-validation-for="TripInitial.CityId" class="small text-danger"></span>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group mb-3">
+                <label class="control-label">Contact No</label><label class="star">*</label>
+            <input type="text" asp-for="TripInitial.ContactNo" id="txtContactNo" class="form-control" />
+                <span asp-validation-for="TripInitial.PassengerId" class="small text-danger"></span>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="form-group mb-3">
+                <label class="control-label">Passenger</label><label class="star">*</label>
+                <input asp-for="TripInitial.PassengerName" id="txtPassenger" readonly class="form-control" />
+                <span asp-validation-for="TripInitial.PassengerName" class="small text-danger"></span>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="form-group mb-3">
+                <label class="control-label">Email</label><label class="star">*</label>
+                <input asp-for="TripInitial.Email"  id="txtEmail" readonly class="form-control" />
+                <span asp-validation-for="TripInitial.Email" class="small text-danger"></span>
+            </div>
+        </div>
+    </div>
+     
+       <div class="row">                
+                <div class="col-8" >
+                        <div class="row" >
+                            <div class="form-group col-6">
+                                        <label class="control-label">Pickup Address</label><label class="star">*</label>
+                                        <input asp-for="TripInitial.OriginAddress" type="text" id="txtOriginAddress"  class="form-control" />
+                                        <span asp-validation-for="TripInitial.OriginAddress" class="small text-danger"></span>
+                                  </div>
+                                <div class="form-group col-6" >
+                                    <label class="control-label">Destination Address</label><label class="star">*</label>
+                                    <input type="text" asp-for="TripInitial.DestinationAddress" id="txtDestinationAddress" class="form-control" />
+                                    <span asp-validation-for="TripInitial.DestinationAddress" class="small text-danger"></span>
+                                </div>
+                        </div>
+                         <div class="row">
+                                <div class="form-group col-6">
+                                    <label asp-for="RequestTime" class="control-label"></label>
+                                        <input asp-for="RequestTime"  class="form-control" />
+                                    <span asp-validation-for="RequestTime" class="small text-danger"></span>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label class="control-label">Vehicle Type</label>
+                                    <select asp-for="TripInitial.VehicleTypeId" id="cboVehicleTypeId" asp-items="@Model.VehicleTypeSelectList" class="form-control">
+                                        <option value="0">Select Vehicle Type</option>
+                                    </select>
+                                    <span asp-validation-for="TripInitial.VehicleTypeId" class="small text-danger"></span>
+                                </div>
+                        </div>
+                        <div class="row">
+                                <div class="form-group col-12" style="display:flex;">
+                                    <label class="control-label">Assign Driver</label><label class="star">*</label>
+                                </div>
+                        </div>
+                        <div class="row">
+                                <div class="form-group col-12" style="display:flex;">
+                                    <input asp-for="TripInitial.DriverName" id="txtsearchDriver" placeholder="Search Driver" class="form-control" />
+                                    @*<button onclick="Filter(false)" class="btn"><i class="fas fa-search fa-2x"></i></button>*@
+                                </div>
+                        </div>
+                    <div class="row" id="searchgrid">
+                            
+
+                    </div>
+                </div>
+                <div class="col-4">
+                        <div class="form-group mb-12">
+                            <div id="map_canvas" style="width:420px; height:420px"></div>
+                        </div>
+                    <div class="row">
+                <div class="form-group col-12" style="display:flex;background-color: antiquewhite;">
+                            <label class="control-label">Ride Estimate</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                            <div class="form-group col-8" style="display:flex;">
+                                <label class="control-label">Base Fare</label>
+                            </div>
+                            <div class="form-group col-4" style="display:flex;">
+                                $<label class="control-label" id="lblBaseFare">@Model.TripInitial.BaseFare</label>
+                            </div>
+                             <div class="form-group col-8" style="display:flex;">
+                                <label class="control-label">Distance</label>
+                            </div>
+                            <div class="form-group col-4" style="display:flex;">
+                                <label class="control-label" id="lblDistance">@Model.TripInitial.DistanceKm</label>Km
+                            </div>
+                            <div class="form-group col-8" style="display:flex;">
+                                <label class="control-label">ETA</label>
+                            </div>
+                            <div class="form-group col-4" style="display:flex;">
+                                <label class="control-label" id="lblDurationMinute">@Model.TripInitial.DurationMinute </label>Mins
+                            </div>      
+                            <div class="form-group col-8" style="display:flex;">
+                                <label class="control-label">Estimated Fair Total</label>
+                            </div>
+                            <div class="form-group col-4" style="display:flex;">
+                                <label class="control-label" id="lblEstimatedCost">$@Model.TripInitial.EstimatedCost</label>
+                            </div>           
+            @*                <div class="form-group col-8" style="display:flex;">
+                                <label class="control-label">Tax</label>
+                            </div>
+                            <div class="form-group col-4" style="display:flex;">
+                                <label class="control-label" id="lblTaxAmount">$@Model.TripInitial.TaxAmount</label>
+                            </div>  *@        
+                            <div class="form-group col-8" style="display:flex;">
+                                <label class="control-label">Total Amount</label>
+                            </div>
+                            <div class="form-group col-4" style="display:flex;">
+                            <label class="control-label" id="lblTotalCost">$@Model.TripInitial.TotalCost</label>
+                            </div>
+                             <div class="form-group col-12" style="display:flex;">
+                                    <label id="lblErrorMessage" style="color:red;">First Assign Driver Is Required</label>
+                            </div>
+                    </div>
+                <div class="row">
+                    <div class="col-12">
+                        <input type="button" id="idBookRide" value="@(Model.TripInitial.Id == "" ? "Book Ride" : "Update Ride Booking")" class="btn btn-success me-2" />
+                <a asp-page="/ManualRideBooking/ManualRideBookingList" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="btn">Back to List</a>
+                    </div>
+                </div>
+                </div>
+        </div>
+   
+
+@section Scripts
+    {
+    @*<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAzU-YOGJ7Lh-5XwOPy_b1GWhKy2dtUx3w"></script>*@
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="~/plugins/moment.js/moment.min.js"></script>
+    <script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+    <h2>Hello</h2>
+    <div id="map_canvas" style="width:400px; height:300px"></div>
+
+    <script>
+
+        
+        function initialize() {
+            var latlng = new google.maps.LatLng(40.716948, -74.003563);
+            var options = {
+                zoom: 14, center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            var map = new google.maps.Map(document.getElementById("map_canvas"), options);
+        }
+        initialize();
+
+
+        var oDataList = [], oPickupAdds = [], oDistAdds = [];
+        $(document).ready(function () {
+            //initialize();
+            var oTripInitial = @Html.Raw(Json.Serialize(@Model.TripInitial));
+            var month = @Model.TripInitial.RequestTime.Month;
+            var day = @Model.TripInitial.RequestTime.Day;
+            var year = @Model.TripInitial.RequestTime.Year;
+            var hour = @Model.TripInitial.RequestTime.Hour;
+            var minute = @Model.TripInitial.RequestTime.Minute;
+            var d = new Date(year, Number(month) - 1, day, hour, minute);
+            $('#RequestTime').datetimepicker({
+                format: 'DD-MMM-YYYY hh:mm',
+                sideBySide: true,
+                date: d
+            });
+            debugger;
+            $('#divTripInitial').data('TripInitial', oTripInitial);
+        //   console.log(oTripInitial);
+            RefreshControl();
+            Filter(true);
+
+        });
+        function RefreshControl(){
+
+            if ($('#divTripInitial').data('TripInitial').id == '' || $('#divTripInitial').data('TripInitial').DriverId=='') {
+                $('idBookRide').attr('disabled',true);
+            }
+            if ($('#divTripInitial').data('TripInitial').DriverId != '')
+            {
+                $('#lblErrorMessage').hide();
+            }
+            $('#txtsearchDriver').val($('#divTripInitial').data('TripInitial').DriverName);
+            $("#txtContactNo").val($('#divTripInitial').data('TripInitial').ContactNo);
+            $("#txtEmail").val($('#divTripInitial').data('TripInitial').Email);
+            LoadCity($('#divTripInitial').data('TripInitial').CountryId);
+        }
+
+
+
+        $("#cboCountryId").on("change", function () {
+           LoadCity($(this).val());
+        });
+        function LoadCity(countryId) {
+            $("#cboCity").empty();
+            $("#cboCity").append("<option value='0'>Select City</option>");
+            var countryId = 
+                $.getJSON('?handler=CityByCountryId&id=' + countryId, (data) => {
+                $.each(data, function (i, item) {
+                    $("#cboCity").append($('<option></option>').val(item.Id).html(item.Name));
+                });
+                if ($('#divTripInitial').data('TripInitial').Id!=""){
+                    $("#cboCity").val($('#divTripInitial').data('TripInitial').CityId);
+                }
+            });
+        }
+
+        $("#cboVehicleTypeId").on("change", function () {
+            Filter(false);
+        });
+
+        $("#txtsearchDriver").keypress(function (event) {
+            debugger;
+            if (event.which == 13) {
+                Filter(false);
+            }
+        });
+
+        function Filter(bIsNew) {
+           // 
+            var template = `<table class="table table-bordered table-sm table-hover table-valign-middle mb-0">
+                            <tbody class="medium">`;
+            var sDriverName = bIsNew==true?"":$.trim($('#txtsearchDriver').val());
+            var vehicleTypeId = bIsNew == true ? "" : $('#cboVehicleTypeId').val();
+            $.getJSON('?handler=FilterDriver&Driver=' + sDriverName + '&vehicleTypeId=' + vehicleTypeId, (data) => {
+                $.each(data, function (i, Driver) {
+                    debugger;
+                      var  imageURL = "/images/" + "NoImage.jpg";
+                    template +=`<tr>`;
+                        template += `<td class="text-center"><img src="` + imageURL + `" class="imageThumbnail-Small" /></td>`;
+                        template += `<td class="text-start"> ` + Driver.FirstName + ` ` + Driver.LastName + ` <br> <i class="fa-duotone fa-phone"></i> `+ Driver.MobileNumber + ` </td>`;
+                        template += `<td class="text-center"><button onclick="AssignDriver('` + Driver.Id + `')" class="btn btn-success" >Assgin Driver</button></td>`;
+                    template += `</tr>`; //closing
+                });
+                template+=`</tbody></table>`;  //ending
+                $("#searchgrid").html(template);
+            });
+        }
+
+
+
+        function AssignDriver(id) {
+            //alert(id); //need another call
+            $.getJSON('?handler=DriverById&id=' + id, (data) => {
+               // debugger;
+                var oDriver = data;
+              //value set of Driver info
+                var oTripIniital = $('#divTripInitial').data('TripInitial');
+                $('#txtsearchDriver').val(oDriver.UserFullName);//value set
+                oTripIniital.DriverId = oDriver.Id;
+                oTripIniital.DriverName = oDriver.UserFullName;
+                oTripIniital.BaseFare = oDriver.BaseFare == null ? 0 : oDriver.BaseFare;
+                oTripIniital.VehicleFareId = oDriver.VehicleFareId;
+               // oTripIniital.CostPerKm = oDriver.CostPerKm;
+                $('#lblErrorMessage').hide();//set driver so message hide
+                    $('idBookRide').attr('disabled', false);
+                $('#divTripInitial').data('TripInitial',oTripIniital); //value set again
+                CalculateValue();
+            });
+        }
+
+        function CalculateValue() 
+        {
+            var oTripIniital = $('#divTripInitial').data('TripInitial');
+            oTripIniital.EstimatedCost = (parseFloat(oTripIniital.BaseFare) * parseFloat(oTripIniital.DistanceKm)).toFixed(2);
+            //oTripIniital.TotalCost = (parseFloat(oTripIniital.EstimatedCost) + parseFloat(oTripIniital.TaxAmount)).toFixed(2);
+            oTripIniital.TotalCost = parseFloat(oTripIniital.EstimatedCost);
+            $('#lblBaseFare').html(oTripIniital.BaseFare);
+            $('#lblDistance').html(oTripIniital.DistanceKm);
+            $('#lblDurationMinute').html(oTripIniital.DurationMinute);
+            $('#lblEstimatedCost').html(oTripIniital.EstimatedCost);
+            //$('#lblTaxAmount').html(oTripIniital.TaxAmount);
+            $('#lblTotalCost').html(oTripIniital.TotalCost);
+            $('#divTripInitial').data('TripInitial',oTripIniital); //value set again
+        }
+
+        function validateInput(){
+
+            if($("#cboCountryId").val()=="0" || $("#cboCountryId").val()==""){
+                alert("Please select Country."); return false;
+            }
+
+            if ($('#cboVehicleTypeId').val() == "0" || $('#cboVehicleTypeId').val() == "") {
+                alert("Please select Vehicle Type."); return false;
+            }
+            if ($('#divTripInitial').data('TripInitial').PassengerId=="0" || $('#divTripInitial').data('TripInitial').PassengerId== "") {
+                alert("Please select Contact No."); return false;
+            }
+
+
+            if ($('#divTripInitial').data('TripInitial').BaseFare<=0) {
+                alert("Sorry, Fare Should be greater then 0."); return false;
+            }
+
+            return true; //this is ok
+        }
+        function RefreshObject() {
+            var oTempTrip = $('#divTripInitial').data('TripInitial');
+
+            var oReturnTrip = {
+                Id: oTempTrip.Id,
+                CountryId: $("#cboCountryId").val(),
+                CityId: $("#cboCity").val(),
+                PassengerId: oTempTrip.PassengerId,
+                DriverId: oTempTrip.DriverId,
+                StatusId: oTempTrip.StatusId, //set in function
+                RequestTime: new Date($('#RequestTime').val()),
+                OriginAddress: $("#txtOriginAddress").val(), //
+                DestinationAddress: $("#txtDestinationAddress").val(),
+                BaseFare: oTempTrip.BaseFare,
+                DistanceKm: oTempTrip.DistanceKm,
+                DurationMinute: oTempTrip.DurationMinute,
+                CostPerKm: oTempTrip.CostPerKm,
+                EstimatedCost: oTempTrip.EstimatedCost,
+                TaxAmount: oTempTrip.TaxAmount,
+                TotalCost: oTempTrip.TotalCost,
+                OriginLatitude: oTempTrip.OriginLatitude,
+                OriginLongitude: oTempTrip.OriginLongitude,
+                DestinationLatitude: oTempTrip.DestinationLatitude,
+                DestinationLongitude: oTempTrip.DestinationLongitude,
+                PickupPointLatitude: oTempTrip.PickupPointLatitude,
+                PickupPointLongitude: oTempTrip.PickupPointLongitude,
+                IsActive:true,
+                
+                VehicleTypeId: $('#cboVehicleTypeId').val(),
+                VehicleFareId: oTempTrip.VehicleFareId,
+                DistanceValue: "",
+                DistanceText: "",
+                DurationValue: "",
+                DurationText: "",
+                DurationInTrafficValue: "",
+                DurationInTrafficText: "",
+                CostPerMin: "",
+                InitialFee: "",
+                CostOfTravelTime: "",
+                CostOfDistance: ""
+            };
+
+            return oReturnTrip;
+        }
+
+        //save
+        $('#idBookRide').click(function(){
+            if(!validateInput()) return;
+            var oTripintital = RefreshObject();
+            $.ajax({
+                type: "POST",
+                url: "?handler=Save",
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                data: oTripintital, //{ "Min": min, Max: max },
+                success: function (response) 
+                {
+                    var oTripInitial = response;
+                    if (oTripInitial.Message =="" || oTripInitial.Message ==null)
+                    {
+                        alert("Successfully Updated." );
+                       
+                    }
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+
+
+        });
+
+        $("#txtContactNo").autocomplete({
+           // debugger;
+            source: function (request, response) {
+                $.getJSON('?handler=AutoPassanger&ContactNo=' + request.term, (data) => {
+                    debugger;
+                    oDataList = data;//keep data list
+                        response($.map(data, function (item) {
+                        return item.MobileNumber;
+                        }))
+                  
+                });
+            },
+            select: function (e, dt) {
+                //debugger;
+                for(var j=0;j<oDataList.length;j++)
+                {
+                    if (oDataList[j].MobileNumber == dt.item.value) {
+                        $('#divTripInitial').data('TripInitial').PassengerId =oDataList[j].Id; //set passenger
+                        $("#txtPassenger").val(oDataList[j].FirstName);
+                        $("#txtEmail").val(oDataList[j].Email);
+                        break;
+                    }
+                }
+                
+            },
+            minLength: 1
+        });
+
+        $("#txtOriginAddress").autocomplete({
+            source: function (request, response) {
+                $.getJSON('?handler=AutoAddress&Address=' + request.term, (data) => {
+                    //  debugger;
+                    oPickupAdds =data;
+                    response($.map(data, function (item) {
+                        return item.HomeAddress;
+                    }))
+
+                });
+            },
+            select: function (e, dt) {
+                //debugger;
+                for(var j=0;j<oPickupAdds.length;j++)
+                {
+                    if (oPickupAdds[j].HomeAddress == dt.item.value) {
+
+                        $('#divTripInitial').data('TripInitial').OriginLatitude = oPickupAdds[j].HomeLatiitude;
+                        $('#divTripInitial').data('TripInitial').OriginLongitude = oPickupAdds[j].HomeLongitude;
+
+                        $('#divTripInitial').data('TripInitial').PickupPointLatitude = oPickupAdds[j].HomeLatiitude;
+                        $('#divTripInitial').data('TripInitial').PickupPointLongitude = oPickupAdds[j].HomeLongitude;
+                        $('#divTripInitial').data('TripInitial').DistanceKm = distance(); //hard code
+                        CalculateValue();
+                        break;
+                    }
+                }
+            },
+            minLength: 1
+        });
+        $("#txtDestinationAddress").autocomplete({
+            source: function (request, response) {
+                $.getJSON('?handler=AutoAddress&Address=' + request.term, (data) => {
+                    //  debugger;
+                    oDistAdds = data;
+                    response($.map(data, function (item) {
+                        return item.HomeAddress;
+                    }))
+
+                });
+            },
+            select: function (e, dt) {
+                //debugger;
+                for(var j=0;j<oDistAdds.length;j++)
+                {
+                    if (oDistAdds[j].HomeAddress == dt.item.value) 
+                    {
+                        $('#divTripInitial').data('TripInitial').DestinationLatitude = oDistAdds[j].HomeLatiitude;
+                        $('#divTripInitial').data('TripInitial').DestinationLongitude = oDistAdds[j].HomeLongitude;
+                        $('#divTripInitial').data('TripInitial').DistanceKm = distance(); //hard code
+                        $('#divTripInitial').data('TripInitial').TaxAmount =parseFloat(parseFloat($('#divTripInitial').data('TripInitial').DistanceKm) * 0.50); //hard code
+                        $('#divTripInitial').data('TripInitial').DurationMinute = 50; //hard code
+                        CalculateValue();
+                        break;
+                    }
+                }
+            },
+            minLength: 1
+        });
+
+        function distance() {
+            var lat1 = $('#divTripInitial').data('TripInitial').OriginLatitude;
+            var lon1 = $('#divTripInitial').data('TripInitial').OriginLongitude;
+            var lat2=$('#divTripInitial').data('TripInitial').DestinationLatitude;
+            var lon2 = $('#divTripInitial').data('TripInitial').DestinationLongitude;
+
+            lat1= lat1==null||lat1==""?0:lat1;
+            lon1 = lon1 == null || lon1 == "" ? 0 : lon1;
+            lat2 = lat2 == null || lat2 == "" ? 0 : lat2;
+            lon2 = lon2 == null || lon2 == "" ? 0 : lon2;
+          
+
+            const R = 6371; // radius of Earth in kilometers
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = R * c;
+            return d.toFixed(3);
+        }
+
+    </script>
+
+    <partial name="_ValidationScriptsPartial" />
+}

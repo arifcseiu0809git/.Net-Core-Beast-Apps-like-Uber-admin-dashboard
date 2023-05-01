@@ -1,0 +1,143 @@
+@page
+@model BEASTAdmin.UI.Pages.Driver.DriverUpsert
+@{
+	ViewData["Title"] = "Driver Entry";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$('.NoteArea').summernote(
+			{
+				height: 150
+			}
+		);
+			var month = @Model.DriverModel.DateOfBirth.Month;
+			var day = @Model.DriverModel.DateOfBirth.Day;
+			var year = @Model.DriverModel.DateOfBirth.Year;
+			var hour = @Model.DriverModel.DateOfBirth.Hour;
+			var minute = @Model.DriverModel.DateOfBirth.Minute;
+			var d = new Date(year, Number(month) - 1, day, hour, minute);
+			$('#DateOfBirth').datetimepicker({
+				format: 'DD-MMM-YYYY',
+				sideBySide: true,
+				date: d
+			});
+
+		$('.custom-file-input').on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).next('.custom-file-label').html(fileName);
+		});
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/Driver/DriverList" asp-route-c="DriverModel" asp-route-p="DriverModell" class="breadcrumb-link">DriverModel List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="DriverModel.Id" type="hidden" />
+	<input asp-for="DriverModel.UserId" type="hidden" />
+	<input asp-for="DriverModel.IsActive" type="hidden" />
+	<input asp-for="DriverModel.IsApproved" type="hidden" />
+
+	<div class="row">
+
+		<div class="form-group col-4 mb-3">
+			<label class="control-label">First Name</label>
+				<input asp-for="DriverModel.FirstName" class="form-control" />
+				<span asp-validation-for="DriverModel.FirstName" class="small text-danger"></span>
+			</div>
+		<div class="form-group col-4 mb-3">
+			<label class="control-label">Middle Name</label>
+				<input asp-for="DriverModel.MiddleName" class="form-control" />
+				<span asp-validation-for="DriverModel.MiddleName" class="small text-danger"></span>
+			</div>
+		<div class="form-group col-4 mb-3">
+			<label class="control-label">LastName</label>
+				<input asp-for="DriverModel.LastName" class="form-control" />
+				<span asp-validation-for="DriverModel.LastName" class="small text-danger"></span>
+			</div>
+
+		<div class="form-group col-4 mb-3">
+			<label class="control-label">Gender</label>
+			<select asp-for="DriverModel.GenderId" class="form-control">
+				<option value="0">Select Gender</option>
+				<option value="3943088D-6A19-4593-ADF0-895682D83988">Male</option>
+				<option value="C5F47701-3052-4ABE-9B7E-1267F5EC00BF">Female</option>
+			</select>
+			<span asp-validation-for="DriverModel.GenderId" class="small text-danger"></span>
+		</div>
+		<div class="form-group col-4 mb-3">
+			<label class="control-label">Email</label>
+				<input asp-for="DriverModel.Email" class="form-control" />
+				<span asp-validation-for="DriverModel.Email" class="small text-danger"></span>
+			</div>	
+			<div class="form-group col-4 mb-3">
+			<label class="control-label">Mobile Number</label>
+			<input asp-for="DriverModel.MobileNumber" class="form-control" />
+			<span asp-validation-for="DriverModel.MobileNumber" class="small text-danger"></span>
+			</div>
+
+
+		<div class="form-group col-4 mb-3">
+			<label class="control-label">Date Of Birth</label>
+			<input asp-for="DateOfBirth" class="form-control" />
+			<span asp-validation-for="DateOfBirth" class="small text-danger"></span>
+		</div>
+			<div class="form-group col-4 mb-3">
+			<label class="control-label">NID</label>
+				<input asp-for="DriverModel.NID" class="form-control" />
+				<span asp-validation-for="DriverModel.NID" class="small text-danger"></span>
+			</div>
+			<div class="form-group col-4 mb-3">
+			<label class="control-label">Driving License No</label>
+				<input asp-for="DriverModel.DrivingLicenseNo" class="form-control" />
+				<span asp-validation-for="DriverModel.DrivingLicenseNo" class="small text-danger"></span>
+			</div>
+		</div>
+
+
+	
+
+	<div class="row">
+		<div class="col-12">
+			<input type="submit" value="@(Model.DriverModel.Id == "" ? "Create Driver" : "Update Driver")" class="btn btn-success me-2" />
+			<a asp-page="/Driver/DriverList" asp-route-c="drivers" asp-route-p="unApprovedDriver" asp-route-approved="false" class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>

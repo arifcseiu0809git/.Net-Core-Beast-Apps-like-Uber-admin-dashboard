@@ -1,0 +1,158 @@
+@page
+@model BEASTAdmin.UI.Pages.PaymentMethod.PaymentMethodUpsertModel
+@{
+    ViewData["Title"] = "Payment Method Administration";
+}
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/PaymentMethod/PaymentMethodList" class="breadcrumb-link" asp-route-c="pmet" asp-route-p="pmetl">Payment Method List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.SuccessMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form method="post">
+    <input asp-for="paymentMethod.Id" type="hidden" />
+    <input asp-for="paymentMethod.UserId" id="txtUserId" type="hidden" />
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group mb-3">
+                <label for="HomeAddress"> Payment Type </label>
+                <select asp-for="paymentMethod.PaymentType" id="ddlPaymentType" asp-items="@Model.PaymentTypeSelectList" class="form-control">
+                    <option value="0">Select Payment Type</option>
+                </select>
+                <span asp-validation-for="paymentMethod.PaymentType" class="small text-danger"></span>
+               
+            </div>
+            <div class="form-group mb-3">
+                <label for="HomeLatiitude">Payment Option </label>
+                 <select asp-for="paymentMethod.PaymentOption" id="ddlPaymentOption" class="form-control">
+                    <option value="0">Select Payment Option</option>
+                </select>
+                <span asp-validation-for="paymentMethod.PaymentOption" class="small text-danger"></span>                 
+            </div> 
+            <div class="form-group mb-3">
+                <label for="HomeLatiitude">User Contact No </label>
+                <input type="text" asp-for="paymentMethod.ContactNo" id="txtContactNo" class="form-control" />
+                <span asp-validation-for="paymentMethod.ContactNo" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="HomeLongitude"> Account Number </label>
+                <input asp-for="paymentMethod.AccountNumber" class="form-control" />
+                <span asp-validation-for="paymentMethod.AccountNumber" class="small text-danger"></span>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group mb-3">
+                <label > Expire MonthYear </label>
+                <input asp-for="paymentMethod.ExpireMonthYear" class="form-control" />
+                <span asp-validation-for="paymentMethod.ExpireMonthYear" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label > Cvv Code </label>
+                <input asp-for="paymentMethod.CvvCode" class="form-control" />
+                <span asp-validation-for="paymentMethod.CvvCode" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label> User Full Name </label>
+                <input asp-for="paymentMethod.UserFullName" id="txtUserFullName" class="form-control" disabled />
+                <span asp-validation-for="paymentMethod.UserFullName" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="paymentMethod.IsActive" class="control-label"></label>
+                <input asp-for="paymentMethod.IsActive" class="form-check" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <input type="submit" value="@(string.IsNullOrEmpty( Model.paymentMethod.Id) ? "Create Payment Method" : "Update Payment Method")" class="btn btn-success me-2" />
+        <a asp-page="/PaymentMethod/PaymentMethodList" asp-route-c="pmet" asp-route-p="pmetl" class="btn btn-success">Back to List</a>
+    </div>
+</form>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script type="text/javascript">
+
+    var oDataList=[];
+    $(document).ready(function () {
+        debugger;
+        var opaymentMethod = @Html.Raw(Json.Serialize(@Model.paymentMethod));
+        if (opaymentMethod.PaymentType != "" && opaymentMethod.PaymentType != "0" && opaymentMethod.PaymentType != null) {
+            loadPaymentOption(opaymentMethod.PaymentType, opaymentMethod.PaymentOption);
+        }
+    });
+
+
+
+    $("#ddlPaymentType").change(function () {
+        var selectedType = $('#ddlPaymentType').find(":selected").val();
+        $('#ddlPaymentOption option:not(:first)').remove();
+        loadPaymentOption(selectedType, "0");
+       
+
+    });
+    function loadPaymentOption(selectedType, PaymentOption) {
+        debugger;
+        if (!selectedType) return;
+         $.getJSON(`?handler=ChangePaymentType&paymentTypeId=${selectedType}`, (data) => {
+            data.forEach(element => {
+                $('#ddlPaymentOption').append(`<option value=${element.Id}>${element.Name}</option>`)
+            });
+            $('#ddlPaymentOption').val(PaymentOption);
+        });
+    }
+
+    $("#txtContactNo").autocomplete({
+        // debugger;
+        source: function (request, response) {
+            if (request.term.length>2)
+            {
+            $.getJSON('?handler=AutoUsers&ContactNo=' + request.term, (data) => {
+                debugger;
+                oDataList = data;//keep data list
+                response($.map(data, function (item) {
+                    return item.PhoneNumber;
+                }))
+
+            });
+            }
+        },
+        select: function (e, dt) {
+            //debugger;
+            for (var j = 0; j < oDataList.length; j++) {
+                if (oDataList[j].PhoneNumber == dt.item.value) {
+                  //  $('#divTripInitial').data('TripInitial').PassengerId = oDataList[j].Id; //set passenger
+                    $("#txtUserFullName").val(oDataList[j].FullName);
+                    $("#txtUserId").val(oDataList[j].Id);
+                    break;
+                }
+            }
+
+        },
+        minLength: 1
+    });
+
+</script>

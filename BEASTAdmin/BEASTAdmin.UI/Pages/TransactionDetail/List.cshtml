@@ -1,0 +1,86 @@
+@page
+@model BEASTAdmin.UI.Pages.TransactionDetail.ListModel
+@inject IConfiguration _config
+
+@{
+	ViewData["Title"] = "Transaction Detail List";
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (Model.TransactionDetails.Count > 0)
+{
+	<form method="post">
+		<div class="row mb-4">
+			@*<div class="col-6 justify-content-start d-flex align-items-center">
+				<a asp-page="/TransactionDetail/Upsert" asp-route-c="transactionDetail" asp-route-p="transactionDetailu" class="btn btn-success"><i class="fa-solid fa-square-plus"></i>&nbsp;Create</a>
+			</div>*@
+			<div class="col-6 justify-content-end d-flex align-items-center">
+				<span class="me-2">Total Record(s): @Model.TotalRecords</span><button asp-page-handler="Export" class="btn"><i class="fa-solid fa-file-export"></i></button>
+			</div>
+		</div>
+
+		<table class="table table-bordered table-sm table-hover table-valign-middle mb-0">
+			<thead class="thead-light text-center">
+				<tr>
+					<th>Transaction Id</th>
+					<th>PaymentMethod Id</th>
+					<th>Transaction Amount</th>
+					<th>Status Id</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody class="medium">
+				@foreach (var transactionDetail in Model.TransactionDetails)
+				{
+					<tr>
+						<td><a asp-page="Display" asp-route-Id="@transactionDetail.Id" target="_blank">@transactionDetail.TransactionId</a></td>
+						<td class="text-end">@transactionDetail.PaymentMethodId</td>
+						<td class="text-end">@transactionDetail.TransactionAmount</td>
+						<td>@transactionDetail.StatusId</td>
+						
+						<td class="text-center">
+							<a asp-page="/TransactionDetail/Upsert" asp-route-Id="@transactionDetail.Id" asp-route-c="transactionDetail" asp-route-p="transactionDetailu" class="btn btn-success"><i class="fas fa-edit"></i></a>
+						</td>
+
+						<td class="text-center">
+							<button asp-page-handler="Delete" asp-route-Id="@transactionDetail.Id" class="btn btn-success" onclick="return confirm('Are you sure you want to delete?')">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</form>
+
+	@if (Model.TotalPages > 1)
+	{
+		int pageSize = Convert.ToInt32(_config["SiteSettings:PageSize"]);
+		<div class="row mt-4">
+			<div class="col-sm-8 overflow-auto">
+				<ul class="pagination mb-0">
+					@for (var i = 1; i <= Model.TotalPages; i++)
+					{
+						<li class="pagination-item @(i == Model.PageNumber ? "active" : "")">
+							<a asp-page="/TransactionDetail/List" asp-route-pagenumber="@i" asp-route-c="transactionDetail" asp-route-p="transactionDetaill" class="pagination-link">@i</a>
+						</li>
+					}
+				</ul>
+			</div>
+			<div class="col-sm-4 align-self-center text-sm-right text-center">
+				Showing @(((Model.PageNumber - 1) * pageSize) + 1) to @((Model.PageNumber * pageSize) > Model.TotalRecords ? Model.TotalRecords : (Model.PageNumber * pageSize)) of @Model.TotalRecords records.
+			</div>
+		</div>
+	}
+}
+else
+{
+	<a asp-page="/TransactionDetail/Upsert" asp-route-c="transactionDetail" asp-route-p="transactionDetailu" class="btn btn-success"><i class="fa-solid fa-square-plus"></i>&nbsp;Create</a>
+	<div>There is no content to show.</div>
+}

@@ -1,0 +1,93 @@
+@page
+@model BEASTAdmin.UI.Pages.Vehicle.VehicleBrand.UpsertModel
+@{
+	ViewData["Title"] = "Vehicle Brand Administration";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$('.NoteArea').summernote(
+			{
+				height: 150
+			}
+		);
+
+		$('.custom-file-input').on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).next('.custom-file-label').html(fileName);
+		});
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/Vehicle/VehicleBrand/List" asp-route-c="vehicleBrand" asp-route-p="vehicleBrandl" class="breadcrumb-link">Vehicle Brand List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="vehicleBrand.Id" type="hidden" />
+	
+	<div class="row">
+		<div class="col-6">
+			<div class="form-group mb-3">
+				<label asp-for="vehicleBrand.Name" class="control-label"></label>
+				<input asp-for="vehicleBrand.Name" class="form-control" />
+				<span asp-validation-for="vehicleBrand.Name" class="small text-danger"></span>
+			</div>
+			<div class="form-group mb-3">
+				<label asp-for="vehicleBrand.IsActive" class="control-label"></label>
+				<select asp-for="vehicleBrand.IsActive" class="form-control">
+					<option value=FALSE>Select Activity</option>
+					<option value=TRUE>On Line</option>
+					<option value=FALSE>Off Line</option>
+				</select>
+				<span asp-validation-for="vehicleBrand.IsActive" class="small text-danger"></span>
+			</div>			
+		</div>
+
+		<div class="col-6">
+			
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<input type="submit" value="@(string.IsNullOrEmpty(Model.vehicleBrand.Id) ? "Create Vehicle Brand" : "Update Vehicle Brand")" class="btn btn-success me-2" />
+			<a asp-page="/Vehicle/VehicleBrand/List" asp-route-c="vehicleBrand" asp-route-p="vehicleBrandl" class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>

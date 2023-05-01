@@ -1,0 +1,87 @@
+@page
+@model BEASTAdmin.UI.Pages.TransactionRequest.UpsertModel
+@{
+	ViewData["Title"] = "Transaction Request Administration";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$('.NoteArea').summernote(
+			{
+				height: 150
+			}
+		);
+
+		$('.custom-file-input').on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).next('.custom-file-label').html(fileName);
+		});
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/TransactionRequest/List" asp-route-c="transactionRequest" asp-route-p="transactionRequestl" class="breadcrumb-link">TransactionRequest List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="TransactionRequest.Id" type="hidden" />
+	@*<input asp-for="TransactionRequest.ImageUrl" type="hidden" />*@
+
+	<div class="row">
+		<div class="col-6">
+			<div class="form-group mb-3">
+				<label asp-for="TransactionRequest.TripId" class="control-label"></label>
+				<input asp-for="TransactionRequest.TripId" class="form-control" />
+				<span asp-validation-for="TransactionRequest.TripId" class="small text-danger"></span>
+			</div>
+
+			<div class="form-group mb-3">
+				<label asp-for="TransactionRequest.APIEndPointRequestData" class="control-label"></label>
+				<input asp-for="TransactionRequest.APIEndPointRequestData" class="form-control" />
+				<span asp-validation-for="TransactionRequest.APIEndPointRequestData" class="small text-danger"></span>
+			</div>			
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<input type="submit" value="@(Model.TransactionRequest.Id == "" ? "Create TransactionRequest" : "Update TransactionRequest")" class="btn btn-success me-2" />
+			<a asp-page="/TransactionRequest/List" asp-route-c="transactionRequest" asp-route-p="transactionRequestl" class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>

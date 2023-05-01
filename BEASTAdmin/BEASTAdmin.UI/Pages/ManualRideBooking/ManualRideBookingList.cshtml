@@ -1,0 +1,132 @@
+@page
+@model BEASTAdmin.UI.Pages.ManualRideBooking.ManualRideBookingListModel
+@inject IConfiguration _config
+
+@{
+	ViewData["Title"] = "Manual Ride Booking List";
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+<style>
+
+	.status {
+		color:white;
+	}
+</style>
+
+<div class="filter">
+	<form method="post">
+		<label>Status</label>
+		<select asp-for="StatusId" asp-items="@Model.StatusList"><option value="0">All</option></select>	
+		<label>Vehicle Type</label>
+		<select asp-for="VehicleTypId" asp-items="@Model.VehicleTypeList"><option value="0">All</option></select>
+		<label class="control-label">Driver</label>
+		<input asp-for="DriverName" />
+		<label class="control-label">Passenger</label>
+		<input asp-for="PassengerName" />
+		<button asp-page-handler="Filter" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="btn bg-transparent"><i class="fas fa-search fa-2x"></i></button>
+	</form>
+</div>
+
+@if (Model.TripInitials.Count > 0)
+{
+	<form method="post">
+		<div class="row mb-4">
+			<div class="col-6 justify-content-start d-flex align-items-center">
+				<a asp-page="/ManualRideBooking/ManualRideBookingUpsert" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="btn btn-success"><i class="fa-solid fa-square-plus"></i>&nbsp;Create</a>
+			</div>
+			<div class="col-6 justify-content-end d-flex align-items-center">
+				<input asp-for="StatusId" type="hidden" />
+				<input asp-for="VehicleTypId" type="hidden" />
+				<input asp-for="DriverName" type="hidden"/>
+				<input asp-for="PassengerName" type="hidden"/>
+				<span class="me-2">Total Record(s): @Model.TotalRecords</span><button asp-page-handler="Export" class="btn"><i class="fa-solid fa-file-export"></i></button>
+			</div>
+		</div>
+
+		<table class="table table-bordered table-sm table-hover table-valign-middle mb-0">
+			<thead class="thead-light text-center">
+				<tr>
+					@*<th>Ride Id </th>*@
+					<th>Passenger</th>
+					<th>Contact No</th>
+					<th>Driver</th>
+					<th>Request Time</th>
+					<th>Pick/Drop Address</th>
+					<th>Vehicle Type</th>
+					<th>Status</th>
+					<th>Edit</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody class="medium">
+				@foreach (var tripInitial in Model.TripInitials)
+				{
+					<tr>
+						@*<td class="text-start">@tripInitial.Id</td>*@
+						<td class="text-start">@tripInitial.PassengerName</td>
+						<td class="text-start">@tripInitial.ContactNo</td>
+						<td class="text-start">@tripInitial.DriverName</td>
+						<td class="text-center">@tripInitial.RequestTime.ToString("dd MMM yyyy hh:mm t")</td>
+						<td class="text-start">@tripInitial.OriginAddress <br> @tripInitial.DestinationAddress</td>
+						<td class="text-center">@tripInitial.VehicleTypeName</td>
+						<td class="text-center">
+							@if (@tripInitial.StatusName == "Cancel")
+							{
+								<label style="background-color:red;" class="status" >@tripInitial.StatusName</label>
+							}
+							else if (@tripInitial.StatusName == "Pending")
+							{
+								<label style="background-color:blue;" class="status">@tripInitial.StatusName</label>
+							}
+							else
+							{
+								<label style="background-color:greenyellow;" class="status">@tripInitial.StatusName</label>
+							}
+							<br>
+							<label><a asp-page="/ManualRideBooking/InvoiceDetails" asp-route-Id="@tripInitial.Id" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP">Invoice Details</a></label>
+						</td>
+						<td class="text-center">
+							<a asp-page="/ManualRideBooking/ManualRideBookingUpsert" asp-route-Id="@tripInitial.Id" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="btn btn-success" title="Edit"><i class="fas fa-edit"></i></a>
+						</td>
+
+						<td class="text-center">
+							<button asp-page-handler="Delete" asp-route-Id="@tripInitial.Id" class="btn btn-success" onclick="return confirm('Are you sure you want to delete?')" title="Delete">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</form>
+
+	@if (Model.TotalPages > 1)
+	{
+		int pageSize = Convert.ToInt32(_config["SiteSettings:PageSize"]);
+		<div class="row mt-4">
+			<div class="col-sm-8 overflow-auto">
+				<ul class="pagination mb-0">
+					@for (var i = 1; i <= Model.TotalPages; i++)
+					{
+						<li class="pagination-item @(i == Model.PageNumber ? "active" : "")">
+							<a asp-page="/ManualRideBooking/ManualRideBookingList" asp-route-pagenumber="@i" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingl" class="pagination-link">@i</a>
+						</li>
+					}
+				</ul>
+			</div>
+			<div class="col-sm-4 align-self-center text-sm-right text-center">
+				Showing @(((Model.PageNumber - 1) * pageSize) + 1) to @((Model.PageNumber * pageSize) > Model.TotalRecords ? Model.TotalRecords : (Model.PageNumber * pageSize)) of @Model.TotalRecords records.
+			</div>
+		</div>
+	}
+}
+else
+{
+	<a asp-page="/ManualRideBooking/ManualRideBookingUpsert" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingu" class="btn btn-success"><i class="fa-solid fa-square-plus"></i>&nbsp;Create</a>
+	<div>There is no content to show.</div>
+}

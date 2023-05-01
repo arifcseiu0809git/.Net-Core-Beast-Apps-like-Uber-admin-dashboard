@@ -1,0 +1,84 @@
+@page
+@model BEASTAdmin.UI.Pages.Coupon.CouponUpsertModel
+@{
+    ViewData["Title"] = "Coupon Administration";
+}
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/Coupon/CouponList" class="breadcrumb-link" asp-route-c="Coup" asp-route-p="Coupl">Coupon List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.SuccessMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form method="post">
+    <input asp-for="Coupon.Id" type="hidden" />
+
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group mb-3">
+                <label for="CouponCode"> Coupon Code </label>
+                <input asp-for="Coupon.CouponCode" class="form-control" />
+                <span asp-validation-for="Coupon.CouponCode" class="small text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="StartTime">Start Time  </label>
+                <input asp-for="Coupon.StartTime" class="form-control" />
+                <span asp-validation-for="Coupon.StartTime" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="DiscountPercentage"> Discount Percentage </label>
+                <input asp-for="Coupon.DiscountPercentage" class="form-control" />
+                <span asp-validation-for="Coupon.DiscountPercentage" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Coupon.IsActive" class="control-label">Is Active?</label>
+                <input asp-for="Coupon.IsActive" class="form-check" />
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group mb-3">
+                <label for="DiscountOnFare"> Discount On Fare  </label>
+                <input asp-for="Coupon.DiscountOnFare" class="form-control" />
+                <span asp-validation-for="Coupon.DiscountOnFare" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="EndTime"> End Time </label>
+                <input asp-for="Coupon.EndTime" class="form-control" />
+                <span asp-validation-for="Coupon.EndTime" class="small text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="Coupon.IsAppliedCoupon" class="control-label"> Is Applied ?</label>
+                <input asp-for="Coupon.IsAppliedCoupon" class="form-check" />
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="@(string.IsNullOrEmpty( Model.Coupon.Id) ? "Create Coupon" : "Update Coupon")" class="btn btn-success me-2" />
+        <a asp-page="/Coupon/CouponList" asp-route-c="Coup" asp-route-p="Coupl" class="btn btn-success">Back to List</a>
+    </div>
+</form>

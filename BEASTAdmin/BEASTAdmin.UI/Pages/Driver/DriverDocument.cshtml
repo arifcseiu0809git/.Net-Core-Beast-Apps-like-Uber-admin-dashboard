@@ -1,0 +1,48 @@
+@page
+@model BEASTAdmin.UI.Pages.Driver.DriverDocument
+@inject IConfiguration _config
+
+@{
+	ViewData["Title"] = "Driver Documents";
+}
+
+@section Breadcrumb
+	{
+	<li class="breadcrumb-item"><a asp-page="/Driver/DriverList" asp-route-c="Driver" asp-route-p="@(Model.IsApproved== false ? "unApprovedDriver" : "ApprovedDriver")" class="breadcrumb-link">Back to List</a></li>
+	<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (Model.DocumentModels.Count > 0)
+{
+	@foreach (var Doc in Model.DocumentModels)
+	{
+		<form method="post">
+			<div class="row mb-4">
+				<div class="col-6 justify-content-start d-flex align-items-center">
+					<div class="card">
+						<div class="card-header">@Doc.Name</div>
+						@if (Doc.DocumentUrl == "" || Doc.DocumentUrl == null)
+						{
+							<div class="card-body"><label>@Doc.Name</label> Not Found</div>
+						}
+						else
+						{
+							string imageURL = "/images/doc/" + Doc.Name + "/" + Doc.DocumentUrl;
+							<td class="text-center">
+								<img height="250" width="450" src="@imageURL" class="imageThumbnail-Large" />
+							</td>
+						}
+						<div class="card-footer">
+							<a asp-page="/Driver/DocumentUpLoad" asp-route-Id="@Doc.Id" class="btn btn-success"><i class="fa-solid fa-square-plus"></i>&nbsp;@Doc.Name</a>
+						</div>
+					</div>
+
+
+				</div>
+
+			</div>
+
+		</form>
+	}
+}

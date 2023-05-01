@@ -1,0 +1,12 @@
+{
+  "Data": {
+    "Name": "Pending",
+    "CreatedBy":"Atik"
+  },
+  "Log": {
+    "UserName": "atikahmed4me@gmail.com",
+    "UserRole": "SystemAdmin",
+    "IP": "192.168.100.15",
+    "Action": "no-reply@vintageitltd.com"
+  }
+}

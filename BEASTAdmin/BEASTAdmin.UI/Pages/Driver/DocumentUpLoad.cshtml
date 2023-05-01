@@ -1,0 +1,95 @@
+@page
+@model BEASTAdmin.UI.Pages.Driver.DocumentUpLoad
+@{
+	ViewData["Title"] = "Document Upload";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$('.NoteArea').summernote(
+			{
+				height: 150
+			}
+		);
+		
+
+		$('.custom-file-input').on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).next('.custom-file-label').html(fileName);
+		});
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/Driver/DriverList" asp-route-c="DriverModel" asp-route-p="DriverModell" class="breadcrumb-link">DriverModel List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="DocumentModel.Id" type="hidden" />
+	<input asp-for="DocumentModel.Name" type="hidden" />
+	<input asp-for="DocumentModel.UserId" type="hidden" />
+	<input asp-for="DocumentModel.DocumentType" type="hidden" />
+	<div class="row">
+
+
+		<div class="form-group mb-3">
+			<label asp-for="DocumentModel.Name" class="control-label"></label>
+
+			@if (!string.IsNullOrEmpty(Model.DocumentModel.Name))
+			{
+				<div class="mb-1"><a href="@Model.ImageURL" target="_blank">Current image of @Model.DocumentModel.Name</a></div>
+			}
+
+			<div class="custom-file">
+				<input asp-for="DocumentImage" class="form-control custom-file-input" data-val-required="false" />
+				<label class="custom-file-label">Click here to select picture</label>
+				<div class="small">(Recommended Type: jpg/png, Size: 300 KB, Dimension: 520 X 300)</div>
+			</div>
+		</div>
+		
+		</div>
+
+
+
+    <div class="row">
+		<div class="col-12">
+			<input type="submit" value="Upload Doc" class="btn btn-success me-2" />
+			<a asp-page="/Driver/DriverDocument" asp-route-Id="@Model.DocumentModel.UserId" class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>

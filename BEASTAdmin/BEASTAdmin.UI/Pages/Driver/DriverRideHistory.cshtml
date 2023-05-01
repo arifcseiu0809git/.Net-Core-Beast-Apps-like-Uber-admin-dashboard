@@ -1,0 +1,67 @@
+@page
+@model BEASTAdmin.UI.Pages.Driver.DriverStatement
+@inject IConfiguration _config
+
+@{
+	ViewData["Title"] = "History Of "+@Model.DriverName;
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+<style>
+	th{
+		width:50%;
+		background-color: DARKGREEN;
+		color:white;
+	}
+	td{
+		width:50%;
+	}
+</style>
+<div class="row">
+    <div class="col-12 justify-content-start d-flex align-items-center">
+		<a asp-page="/Driver/DriverList" asp-route-c="Driver" asp-route-p="@(Model.DriverModel.IsApproved== false ? "unApprovedDriver" : "ApprovedDriver")" asp-route-approved="@Model.DriverModel.IsApproved">&nbsp;Back To List</a>
+    </div>
+
+		@foreach (var Trip in Model.TripModels)
+		{
+				<div class="col-6 ">
+					<div class="card">
+						<div class="card-body">
+							<table>
+								<tr>
+									<th>Ride Id</th>
+									<th>@Trip.Id</th>
+								</tr>
+								<tr>
+									<td>User Name</td>
+									<td>@Trip.PassengerName</td>
+								</tr>
+								<tr>
+									<td>Date</td>
+									<td>@Trip.RequestTime.ToString("dd MMM yyyy")</td>
+								</tr>
+								<tr>
+									<td>Amount</td>
+									<td>$@Trip.Total</td>
+								</tr>
+								<tr>
+									<td>Payment Status</td>
+									<td>Card</td>
+								</tr>
+								<tr>
+									<td>Status</td>
+									<td>@Trip.StatusName</td>
+								</tr>
+							</table>
+							
+							</div>
+					</div>
+				</div>
+
+		}
+</div>
+

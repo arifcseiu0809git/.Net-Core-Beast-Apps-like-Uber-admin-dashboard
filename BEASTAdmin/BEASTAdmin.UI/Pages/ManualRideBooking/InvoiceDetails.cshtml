@@ -1,0 +1,452 @@
+@page
+@model BEASTAdmin.UI.Pages.ManualRideBooking.InvoiceDetailsModel
+      
+@{
+    ViewData["Title"] = "Invoice Details";
+}
+
+@section Styles
+    {
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+    <link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+    <link href="~/css/googlemap.min.css" rel="stylesheet" />
+}
+    @section Breadcrumb
+    {
+    <li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+    <li class="breadcrumb-item"><a asp-page="/ManualRideBooking/ManualRideBookingList" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="breadcrumb-link">Manual Ride Booking List</a></li>
+    <li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        @Html.Raw(Model.ErrorMessage)
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<style type="text/css">
+    .form-group{
+        border-bottom:1px solid;
+    }
+
+    p {
+        font-weight:400;
+    }
+</style>
+
+@Html.AntiForgeryToken()
+    <input asp-for="TripInitial.Id" type="hidden" />
+   <div class="row" id="divTripInitial">                
+                <div class="col-6" >
+                     <div class="row">
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Rid Id</label>
+                            </div>
+                             <div class="form-group col-6" style="display:flex;">
+                                <p  id="lblBaseFare">: @Model.TripInitial.Id</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Passenger Name</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p  id="lblBaseFare">: @Model.TripInitial.PassengerName</p>
+                            </div>         
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Driver Name</label>
+                            </div>
+                             <div class="form-group col-6" style="display:flex;">
+                              <p  id="lblBaseFare">: @Model.TripInitial.DriverName</p>
+                            </div> 
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Ride Start</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                  <p  id="lblBaseFare">: @Model.TripInitial.RequestTime.ToString("dd MMM yyyy")</p>
+                            </div>  
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Pick up Address</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p >: @Model.TripInitial.OriginAddress</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Destination Address</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p>: @Model.TripInitial.DestinationAddress</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Vehicle Type</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                 <p>: @Model.TripInitial.VehicleTypeName</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Base Fare</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <p>: $@Model.TripInitial.BaseFare</p>
+                            </div>
+                             <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Total Distance</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                  <p>: @Model.TripInitial.DistanceKm</p>Km
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">ETA</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                  <p >: @Model.TripInitial.DurationMinute </p>Mins
+                            </div>      
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Estimated Fair Total</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                  <p>: $@Model.TripInitial.EstimatedCost</p>
+                            </div>           
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Tax</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                   <p >: $@Model.TripInitial.TaxAmount</p>
+                            </div>          
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Total Amount</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                  <p>: $@Model.TripInitial.TotalCost</p>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Payment Method</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                               <p>: @Model.TripInitial.PaymentMethod</p>
+                            </div>   
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Payment Status</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                            @if (Model.TripInitial.TripId != "")
+                            {
+                                <p>:Paid</p>
+                            }
+                            else
+                            {
+                                <p>: Not Paid</p>
+                            }
+                              
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                <label class="control-label">Ride Status</label>
+                            </div>
+                            <div class="form-group col-6" style="display:flex;">
+                                @if (Model.TripInitial.TripId!= "")
+                                {
+                                    <p>:Complete</p>
+                                }else{
+                                    <p>: Not Complete</p>
+                                }
+                            </div>
+                    </div>
+                    <div class="col-12">
+                        <a asp-page="/ManualRideBooking/ManualRideBookingList" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="btn">Back to List</a>
+                        @if (@Model.TripInitial.TripId=="")
+                        {
+                                @*<a asp-page="/ManualRideBooking/Payment" asp-route-Id="@Model.TripInitial.Id" asp-route-c="manualRideBooking" asp-route-p="manualRideBookingP" class="btn btn-success">Make Advance Payment</a>*@
+                <button class="btn btn-primary float-end" data-bs-toggle="modal" id="btnPayment" data-bs-target="#addPaymentModal">Make Advance Payment</button>
+                <div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addPaymentModalLabel">Add Advance Payment</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="BillDate" class="form-label">Bill Date</label>
+                                        <input type="date" class="form-control" id="BillDate" required>
+                                    </div>
+                                </div>
+                                <div id="paymentSection" class="row">
+                                    <div class="col-md-6">
+                                        <label for="initialBookingAmount" class="form-label">Initial Booking</label>
+                                        <input type="text" class="form-control"  id="initialBookingAmount" value="">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ddlPaymentType" class="form-label">Payment Type</label>
+                                        <select id="ddlPaymentType" class="form-select" aria-label="Payment type selection">
+                                            <option value="">Select payment type</option>
+                                            @foreach (var paymentType in Model.PaymentTypeSelectList)
+                                            {
+                                                <option value="@paymentType.Value">@paymentType.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ddlPaymentOption" class="form-label">Payment Option</label>
+                                        <select id="ddlPaymentOption" class="form-select" aria-label="Payment option">
+                                            <option value="" selected>Select payment option</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ddlPaymentMethod" class="form-label">Payment Method</label>
+                                        <select id="ddlPaymentMethod" class="form-select" aria-label="Payment Method">
+                                            <option value="" selected>Select payment method</option>
+
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 alteroption">
+                                        <label for="AccountNo" class="form-label">Account No</label>
+                                        <input type="text" class="form-control" id="AccountNo" placeholder="AccountNo ">
+                                    </div>
+                                    <div class="col-md-6 alteroption">
+                                        <label for="ExpireMonthYear" class="form-label">Expired Month</label>
+                                        <input type="text" class="form-control" id="ExpireMonthYear" placeholder="Year">
+                                    </div>
+                                    <div class="col-md-6 alteroption">
+                                        <label for="CvvCode" class="form-label">Cvv Code</label>
+                                        <input type="text" class="form-control" id="CvvCode" placeholder="Code">
+                                    </div>
+                     
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" id="btnAddTransaction" class="btn btn-primary" disabled>Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        }
+                    </div>
+                </div>
+                <div class="col-6">
+                        <div class="form-group mb-12">
+                            <div id="map_canvas" style="width:680px; height:550px"></div>
+                        </div>
+                  </div>
+        </div>
+   
+
+@section Scripts
+    {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAzU-YOGJ7Lh-5XwOPy_b1GWhKy2dtUx3w&libraries=places,directions"></script>
+    <div id="map_canvas" style="width:400px; height:300px"></div>
+
+    <script>
+
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById("map_canvas"), {
+                center: { lat: 40.712776, lng: -74.005974 },
+                zoom: 8,
+            });
+
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+            });
+
+            const request = {
+                origin: "New York, NY",
+                destination: "Los Angeles, CA",
+                waypoints: [
+                    {
+                        location: "Las Vegas, NV",
+                        stopover: true,
+                    },
+                ],
+                travelMode: "DRIVING",
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status == "OK") {
+                    directionsRenderer.setDirections(result);
+                }
+            });
+
+            const options = {
+                suppressMarkers: true,
+                polylineOptions: {
+                    strokeColor: "#FF0000",
+                    strokeOpacity: 0.7,
+                    strokeWeight: 5,
+                },
+            };
+            directionsRenderer.setOptions(options);
+        }
+        var oDataList = [], oPickupAdds = [], oDistAdds = [];
+        $(document).ready(function () {
+            initMap();
+            clearTransactionValues();
+            var oTripInitial = @Html.Raw(Json.Serialize(@Model.TripInitial));
+                $('#divTripInitial').data('TripInitial', oTripInitial);
+              
+        });
+
+        var addPaymentModal = document.getElementById('addPaymentModal')
+        addPaymentModal.addEventListener('show.bs.modal', function (event) {
+            clearTransactionValues();
+            $("#btnAddTransaction").prop("disabled", true);
+            $("#initialBookingAmount").val('');
+        });
+
+        var clearTransactionValues = function () {
+            $("#BillDate").val('');
+            $("#initialBookingAmount").val('');
+            $("#transactionId").val('');
+            //$("#paymentSection").hide();
+            $("#ddlPaymentType option:selected").prop("selected", false);
+            $("#ddlPaymentOption option:selected").prop("selected", false);
+            $("#ddlPaymentMethod option:selected").prop("selected", false);
+        }
+
+
+        $("#ddlPaymentType").change(function () {
+            var selectedType = $('#ddlPaymentType').find(":selected").val();
+            $('#ddlPaymentOption option:not(:first)').remove();
+            $('#ddlPaymentMethod option:not(:first)').remove();
+
+            if (!selectedType) return;
+
+            $.getJSON(`?handler=ChangePaymentType&paymentTypeId=${selectedType}`, (data) => {
+                data.forEach(element => {
+                    $('#ddlPaymentOption').append(`<option value=${element.Id}>${element.Name}</option>`)
+                });
+            });
+
+      
+        });
+
+        $("#ddlPaymentOption").change(function () {
+            var selectedType = $('#ddlPaymentType').find(":selected").val();
+            var selectedOption = $('#ddlPaymentOption').find(":selected").val();
+            var userId = $('#divTripInitial').data('TripInitial').PassangerUserId;
+            $('#ddlPaymentMethod option:not(:first)').remove();
+
+            if (!selectedOption && !selectedType) {
+                return;
+            }
+
+            $.getJSON(`?handler=ChangePaymentOption&paymentTypeId=${selectedType}&paymentOptionId=${selectedOption}&userId=${userId}`, (data) => {
+                data.forEach(element => {
+                    $('#ddlPaymentMethod').append(`<option value=${element.Id}>${element.AccountNumber}</option>`)
+                });
+            });
+
+        });
+
+        $("#ddlPaymentMethod").change(function () {
+            var selectedmethod = $('#ddlPaymentMethod').find(":selected").val();
+            if (selectedmethod!="")
+            {
+                $('.alteroption').hide();
+            }else{
+                $('.alteroption').show();
+            }
+            var isValid = ValidateInput();
+            if (isValid) {
+                $("#btnAddTransaction").prop("disabled", false);
+            }
+            else {
+                $("#btnAddTransaction").prop("disabled", true);
+            }
+        });
+
+        $("#AccountNumber,#ExpireMonthYear,#CvvCode,#initialBookingAmount,#BillDate").change(function () {
+            var isValid = ValidateInput();
+            if (isValid) {
+                $("#btnAddTransaction").prop("disabled", false);
+            }
+            else {
+                $("#btnAddTransaction").prop("disabled", true);
+            }
+        });
+
+
+
+        var ValidateInput = function () {
+            var isTypeValid = true;
+            var isOptionValid = true;
+            var isMethodValid = true;
+
+            $('#ddlPaymentType').removeClass('is-invalid');
+
+            if ($('#ddlPaymentType').find(":selected").val() == '') {
+                $('#ddlPaymentType').addClass('is-invalid');
+                return false;
+            }
+
+            if ($('#ddlPaymentOption').find(":selected").val() == '') {
+                $('#ddlPaymentOption').addClass('is-invalid');
+                return false;
+            }
+            $('#BillDate').removeClass('is-invalid');
+            if ($('#BillDate').val() == '') {
+                $('#BillDate').addClass('is-invalid');
+                return false;
+            }
+
+            if ($('#initialBookingAmount').val() == '') {
+                $('#initialBookingAmount').addClass('is-invalid');
+                return false;
+            }
+
+            if ($('#ddlPaymentMethod').find(":selected").val() == '')
+            {
+                
+                if($("#initialBookingAmount").val()==''){
+                    $('#initialBookingAmount').addClass('is-invalid');
+                    return false;
+                }
+                if ($("#ExpireMonthYear").val() == '') {
+                    $('#ExpireMonthYear').addClass('is-invalid');
+                    return false;
+                }
+                if ($("#CvvCode").val() == '') {
+                    $('#CvvCode').addClass('is-invalid');
+                    return false;
+                }
+            }
+
+            return isTypeValid; // && isOptionValid && isMethodValid;
+        }
+
+        $("#btnAddTransaction").click(function () {
+            var isRequiredFieldsValid =  ValidateInput();
+            if (!isRequiredFieldsValid) return;
+
+            var TripInitialId = $('#divTripInitial').data('TripInitial').Id;
+            var paymentMethodId = $('#ddlPaymentMethod').find(":selected").val();
+            var paymentTypeId = $('#ddlPaymentType').find(":selected").val();
+            var paymentOptionId = $('#ddlPaymentOption').find(":selected").val();
+
+            var AccountNumber = $("#AccountNo").val();
+            var ExpireMonthYear = $("#ExpireMonthYear").val();
+            var CvvCode = $("#CvvCode").val();
+            var TransactionAmount = $("#initialBookingAmount").val();
+            var BillDate = $("#BillDate").val();
+
+
+            $.getJSON(`?handler=AddPayment&tripInitialId=${TripInitialId}&paymentMethodId=${paymentMethodId}&paymentTypeId=${paymentTypeId}&paymentOptionId=${paymentOptionId}&accountNumber=${AccountNumber}&expireMonthYear=${ExpireMonthYear}&cvvCode=${CvvCode}&transactionAmount=${TransactionAmount}&BillDate=${BillDate}`
+                , (data) => {
+                    $("#addPaymentModal").modal('toggle');
+                    if (data == "Success") {
+                        //$("#addPaymentModal").modal("hide");
+                        $("#btnPayment").hide();
+                        location.reload();
+                        
+                    }
+                    alert(data);
+                });
+        });
+
+    </script>
+
+
+}

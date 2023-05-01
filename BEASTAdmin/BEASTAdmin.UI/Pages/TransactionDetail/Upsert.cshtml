@@ -1,0 +1,97 @@
+@page
+@model BEASTAdmin.UI.Pages.TransactionDetail.UpsertModel
+@{
+	ViewData["Title"] = "Transaction Detail Administration";
+}
+
+@section Styles
+{
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker-standalone.css" rel="stylesheet" />
+<link href="~/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/plugins/summernote/summernote-bs4.min.css" />
+}
+
+@section Scripts
+{
+<script src="~/plugins/moment.js/moment.min.js"></script>
+<script src="~/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/plugins/summernote/summernote-bs4.min.js"></script>
+
+<script>
+	$(document).ready(function () {
+		$('.NoteArea').summernote(
+			{
+				height: 150
+			}
+		);
+
+		$('.custom-file-input').on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			$(this).next('.custom-file-label').html(fileName);
+		});
+	});
+</script>
+
+<partial name="_ValidationScriptsPartial" />
+}
+
+@section Breadcrumb
+{
+<li class="breadcrumb-item"><a asp-page="/Index" class="breadcrumb-link">Home</a></li>
+	<li class="breadcrumb-item"><a asp-page="/TransactionDetail/List" asp-route-c="transactionDetail" asp-route-p="transactionDetaill" class="breadcrumb-link">TransactionDetail List</a></li>
+<li class="breadcrumb-item active">@ViewData["Title"]</li>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+	<div class="alert alert-warning alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.ErrorMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		@Html.Raw(Model.SuccessMessage)
+		<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+	<input asp-for="TransactionDetail.Id" type="hidden" />
+	@*<input asp-for="VehicleType.ImageUrl" type="hidden" />*@
+
+	<div class="row">
+		<div class="col-6">
+			<div class="form-group mb-3">
+				<label asp-for="TransactionDetail.TransactionId" class="control-label"></label>
+				<input asp-for="TransactionDetail.TransactionId" class="form-control" />
+				<span asp-validation-for="TransactionDetail.TransactionId" class="small text-danger"></span>
+			</div>
+
+			<div class="form-group mb-3">
+				<label asp-for="TransactionDetail.PaymentMethodId" class="control-label"></label>
+				<input asp-for="TransactionDetail.PaymentMethodId" class="form-control" />
+				<span asp-validation-for="TransactionDetail.PaymentMethodId" class="small text-danger"></span>
+			</div>
+			<div class="form-group mb-3">
+				<label asp-for="TransactionDetail.TransactionAmount" class="control-label"></label>
+				<input asp-for="TransactionDetail.TransactionAmount" class="form-control" />
+				<span asp-validation-for="TransactionDetail.TransactionAmount" class="small text-danger"></span>
+			</div>
+			<div class="form-group mb-3">
+				<label asp-for="TransactionDetail.StatusId" class="control-label"></label>
+				<input asp-for="TransactionDetail.StatusId" class="form-control" />
+				<span asp-validation-for="TransactionDetail.StatusId" class="small text-danger"></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-12">
+			<input type="submit" value="@(Model.TransactionDetail.Id == "" ? "Create TransactionDetail" : "Update TransactionDetail")" class="btn btn-success me-2" />
+			<a asp-page="/TransactionDetail/List" asp-route-c="transactionDetail" asp-route-p="transactionDetaill" class="btn btn-success">Back to List</a>
+		</div>
+	</div>
+</form>
